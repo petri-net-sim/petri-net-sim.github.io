@@ -23,7 +23,7 @@ with live animation, watch the statistics, and exchange it as PNML.
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white)
 ![Maven](https://img.shields.io/badge/Maven-C71A36?style=flat-square&logo=apachemaven&logoColor=white)
 
-![Drawing and simulating a Petri net](/upstream/desktop/docs/media/demo-petri-model.gif)
+
 
 </div>
 
@@ -89,7 +89,7 @@ Draw a net, run it with live animation, watch statistics charts, save nets to th
 and import/export PNML. Frame parts of a drawing as Petri-objects, link them across frame
 borders, and animate the whole composition on one canvas.
 
-![Composing and running a Petri-object model](/upstream/desktop/docs/media/demo-petri-object-model.gif)
+![Composing and running a Petri-object model](/showcase/pomp/objects.png)
 
 **Server.**
 

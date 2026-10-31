@@ -1,5 +1,6 @@
 ---
 import sources from '../data/sources.json';
+import Showcase from './Showcase.astro';
 const { lang = 'en' } = Astro.props;
 const uk = lang === 'uk';
 const prefix = uk ? '/uk' : '';
@@ -50,14 +51,14 @@ const command = `docker run -d --name petri-net-sim -p 127.0.0.1:6204:8000 -e AP
     <div class="chapter wrap"><span>01</span><p>{t('CHOOSE YOUR WORKSPACE', 'ОБЕРІТЬ СЕРЕДОВИЩЕ')}</p><div></div><span>{t('Desktop & web', 'Десктоп і веб')}</span></div>
     <section id="tools" class="tools wrap">
       <article class="desktop product"><div class="product-top"><span class="tag">{t('DESKTOP APPLICATION', 'НАСТІЛЬНИЙ ЗАСТОСУНОК')}</span><span class="version">{desktop.release || 'Java 23+'}</span></div><h2>PetriObjModelPaint</h2><p>{t('Draw Petri nets, compose Petri-object models and run simulations. A desktop workspace for exploring how your system behaves.', 'Будуйте мережі Петрі, поєднуйте Петрі-об’єкти та запускайте симуляцію. Настільне середовище для дослідження поведінки систем.')}</p>
-        <div class="screenshot"><img src="/upstream/desktop/docs/media/demo-petri-model.gif" alt={t('PetriObjModelPaint editor and simulation', 'Редактор і симуляція PetriObjModelPaint')} loading="lazy" width="900" height="510" /></div>
+        <Showcase app="pomp" lang={lang} />
         <div class="download-label">{t('DOWNLOAD FOR YOUR PLATFORM', 'ЗАВАНТАЖИТИ ДЛЯ СВОЄЇ ПЛАТФОРМИ')}</div>
         <div class="downloads">{['windows', 'linux', 'macos'].map(platform => { const asset = desktop.downloads.find(a => a.platform === platform); return <a class="download" href={asset?.url || desktop.releaseUrl}>{platform === 'macos' ? 'macOS' : platform === 'windows' ? 'Windows' : 'Linux'} <span>↓</span></a>; })}</div>
         <p class="requirement">{t('Requires Java 23 or newer.', 'Потрібна Java 23 або новіша.')} <a href={`${prefix}/desktop/docs/desktop-ui/`}>{t('Installation guide', 'Встановлення')} →</a></p>
         <a class="product-link" href={`${prefix}/desktop/overview/`}>{t('Explore the desktop documentation', 'Документація настільного застосунку')} →</a>
       </article>
       <article class="web product"><div class="product-top"><span class="tag">{t('WEB APPLICATION', 'ВЕБЗАСТОСУНОК')}</span><span class="version">{sources.web.release || 'Docker'}</span></div><h2>Petri Net Sim</h2><p>{t('Describe a system in natural language and generate a Petri net with an LLM. Refine the model in the browser, simulate it and inspect the results.', 'Опишіть систему звичайною мовою та згенеруйте мережу Петрі за допомогою LLM. Редагуйте модель у браузері, запускайте симуляцію й аналізуйте результати.')}</p>
-        <div class="screenshot"><img src="/upstream/web/docs/assets/chat.webp" alt={t('Petri Net Sim generating a model from a description', 'Генерація моделі за описом у Petri Net Sim')} loading="lazy" width="900" height="510" /></div>
+        <Showcase app="pns" lang={lang} />
         <div class="download-label">{t('RUN LOCALLY WITH DOCKER', 'ЗАПУСТИТИ ЛОКАЛЬНО ЧЕРЕЗ DOCKER')}</div><div class="terminal"><div><span>terminal</span><button class="copy" data-copy={command}>{t('Copy command', 'Копіювати')}</button></div><pre><code>{command}</code></pre></div>
         <p class="requirement">{t('Then open', 'Потім відкрийте')} <a href="http://localhost:6204">localhost:6204</a>. {t('Bring your own LLM key. Image: linux/amd64.', 'Додайте власний ключ LLM. Образ: linux/amd64.')}</p>
         <a class="product-link" href={`${prefix}/web/docs/running/`}>{t('Setup, source builds and documentation', 'Налаштування, збірка та документація')} →</a>

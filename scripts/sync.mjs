@@ -15,6 +15,13 @@ export function rewriteLinks(text, id, file, files, repository, revision) {
     const [pathname, anchor] = href.split('#');
     let target;
     try { target = path.posix.normalize(path.posix.join(path.posix.dirname(file), decodeURI(pathname))); } catch { return href; }
+    const posters = {
+      'web:docs/assets/chat.webp': '/showcase/pns/generation.png',
+      'web:docs/assets/simulation.gif': '/showcase/pns/simulation.png',
+      'desktop:docs/media/demo-petri-model.gif': '/showcase/pomp/editor.png',
+      'desktop:docs/media/demo-petri-object-model.gif': '/showcase/pomp/objects.png'
+    };
+    if (posters[`${id}:${target}`]) return posters[`${id}:${target}`];
     if (files.has(target)) return `/${route(id, target)}/${anchor ? '#' + anchor : ''}`;
     if (/\.(png|webp|gif|svg|jpg|jpeg|pnml|json)$/i.test(target) && target.startsWith('docs/')) return `/upstream/${id}/${target}${anchor ? '#' + anchor : ''}`;
     const kind = /\.[a-z0-9]+$/i.test(target) ? 'blob' : 'tree';
@@ -54,6 +61,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       let body = (await readFile(path.join(dir, file), 'utf8')).replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, '');
       const heading = (body.match(/^#\s+(.+)$/m)?.[1]?.replace(/[`*_]/g, '') || path.basename(file, '.md')).replace(/[\u2013\u2014]/g, '-');
       body = body.replace(/^#\s+.+\r?\n/m, '').replace(/[\u2013\u2014]/g, '-');
+      // Overview pages render the shared slideshow above the source text.
+      if (file === 'README.md' && id === 'web') body = body.replace(/<img\b[^>]*src="docs\/assets\/chat\.webp"[^>]*>/g, '');
+      if (file === 'README.md' && id === 'desktop') body = body.replace(/!\[[^\]]*\]\(docs\/media\/demo-petri-model\.gif\)/g, '');
       body = rewriteLinks(body, id, file, selected, config.repository, revision);
       const sourceUrl = `https://github.com/${config.repository}/blob/${revision}/${file}`;
       const notice = `> Source: [${config.repository}](${sourceUrl}). ${release ? `Release ${release.tag_name}` : 'Source revision'}: \`${revision.slice(0, 7)}\`. [License](https://github.com/${config.repository}/blob/${revision}/LICENSE).\n\n`;

@@ -10,6 +10,7 @@ test('Markdown links resolve within the source tree and preserve source provenan
   assert.match(result, /github.com\/owner\/repo\/blob\/abc123\/backend\/main.py/);
   assert.match(result, /\(https:\/\/example.com\)/);
   assert.equal(route('web', 'README.md'), 'web/overview');
+  assert.equal(rewriteLinks('![Simulation](assets/simulation.gif)', 'web', 'docs/simulation.md', files, 'owner/repo', 'abc123'), '![Simulation](/showcase/pns/simulation.png)');
 });
 test('source updates preserve agent-authored Ukrainian pages exactly', () => {
   const original = '---\ntitle: "Guide"\n---\nUpdated English text';

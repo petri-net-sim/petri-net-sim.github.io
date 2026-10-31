@@ -33,7 +33,7 @@ rather think about the model than about the tooling.
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
 
-<img src="/upstream/web/docs/assets/chat.webp" alt="A call centre described in one sentence; the agent answers and the Petri net appears on the canvas" width="900">
+
 
 </div>
 
@@ -99,7 +99,7 @@ distribution and delay under its name.
 **The simulator.** Tokens move as the run plays; the same run can be stepped
 one firing at a time, or skipped straight to its final state.
 
-![A simulation running: tokens moving through the net, the firing transition highlighted](/upstream/web/docs/assets/simulation.gif)
+![A simulation running: tokens moving through the net, the firing transition highlighted](/showcase/pns/simulation.png)
 
 **The statistics.** Every place and transition plotted against the simulation
 clock, with a summary table per series. The run [exports](/uk/web/docs/simulation/)

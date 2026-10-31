@@ -38,6 +38,12 @@ Portal pages are paired between `src/content/docs/` and `src/content/docs/uk/`. 
 
 After reviewing a translated guide, record its source version, for example `npm run locales -- --record desktop/docs/desktop-ui`. This stores `translationSourceHash` in its frontmatter. Future changes to the English source are listed in `.cache/localization-report.json` and the CI log for agent review. They never overwrite authored Ukrainian text. `AGENTS.md` documents the editing workflow.
 
+## Application slideshows
+
+The home page and both application overview pages use `src/components/Showcase.astro`. PNS presents generation, editing, simulation, statistics and Petri-object composition. The desktop gallery presents a classical net, simulation and Petri-object composition. Captions and controls are authored in English and Ukrainian.
+
+Slides advance every six seconds while visible. Hovering or keyboard focus pauses advancement. Manual navigation pauses autoplay; a play/pause control resumes it. Reduced-motion preferences disable autoplay initially. Screenshots open at full resolution. Static snapshots in `public/showcase/` are extracted from the existing project recordings without changing their contents; screenshots remain covered by the source project's license. Imported guides use static posters in place of animated promotional media. Source application repositories are unchanged.
+
 ## Reference generation
 
 The CI environment provides Java 23, Maven, Python 3.13 and uv. Run `python scripts/references.py` after synchronizing sources to generate the OpenAPI contracts and Javadoc. The script exports FastAPI's schema without starting its lifecycle or connecting to a database. The Java server is started on loopback only to retrieve its schema and is stopped afterward.
