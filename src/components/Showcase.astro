@@ -15,10 +15,10 @@ const slides = app === 'pns' ? [
 ];
 ---
 <app-showcase data-app={app} data-lang={lang} role="region" aria-roledescription={t('slideshow', 'слайд-шоу')} aria-label={app === 'pns' ? 'Petri Net Sim' : 'PetriObjModelPaint'}>
-  <div class="slides">{slides.map((slide, index) => <figure hidden={index !== 0} data-slide>
+  <div class="slides">{slides.map((slide, index) => <figure data-active={index === 0 ? 'true' : 'false'} aria-hidden={index !== 0} inert={index !== 0} data-slide>
     <a href={slide.src} target="_blank" rel="noopener" title={t('Open full-size screenshot', 'Відкрити зображення в повному розмірі')}><img src={slide.src} alt={`${slide.title}. ${slide.text}`} loading="lazy" width="1200" height="650"/><span class="expand" aria-hidden="true">↗</span></a>
     <figcaption><strong>{slide.title}</strong><span>{slide.text}</span></figcaption>
-  </figure>)}</div>
+  </figure>)}<button type="button" class="overlay-arrow previous" data-prev aria-label={t('Previous slide', 'Попередній слайд')}>‹</button><button type="button" class="overlay-arrow next" data-next aria-label={t('Next slide', 'Наступний слайд')}>›</button></div>
   <div class="controls"><button type="button" data-prev aria-label={t('Previous slide', 'Попередній слайд')}>←</button><div class="dots" role="group" aria-label={t('Choose slide', 'Обрати слайд')}>{slides.map((slide, index) => <button type="button" data-index={index} aria-label={slide.title} aria-pressed={index === 0}><span></span></button>)}</div><button type="button" data-next aria-label={t('Next slide', 'Наступний слайд')}>→</button><button type="button" class="pause" data-pause aria-label={t('Pause slideshow', 'Призупинити слайд-шоу')}>Ⅱ</button><span class="counter" aria-live="off" data-counter>1 / {slides.length}</span></div>
 </app-showcase>
 <script>
@@ -34,7 +34,11 @@ class AppShowcase extends HTMLElement {
     const uk = this.dataset.lang === 'uk';
     const render = (next: number) => {
       index = (next + slides.length) % slides.length;
-      slides.forEach((slide, n) => slide.hidden = n !== index);
+      slides.forEach((slide, n) => {
+        slide.dataset.active = String(n === index);
+        slide.setAttribute('aria-hidden', String(n !== index));
+        slide.inert = n !== index;
+      });
       dots.forEach((dot, n) => dot.setAttribute('aria-pressed', String(n === index)));
       counter.textContent = `${index + 1} / ${slides.length}`;
     };
@@ -43,8 +47,8 @@ class AppShowcase extends HTMLElement {
       pause.setAttribute('aria-label', paused ? (uk ? 'Продовжити слайд-шоу' : 'Play slideshow') : (uk ? 'Призупинити слайд-шоу' : 'Pause slideshow'));
     };
     const manual = (next: number) => { render(next); paused = true; updatePause(); };
-    this.querySelector('[data-prev]')!.addEventListener('click', () => manual(index - 1));
-    this.querySelector('[data-next]')!.addEventListener('click', () => manual(index + 1));
+    this.querySelectorAll('[data-prev]').forEach(button => button.addEventListener('click', () => manual(index - 1)));
+    this.querySelectorAll('[data-next]').forEach(button => button.addEventListener('click', () => manual(index + 1)));
     dots.forEach((dot, n) => dot.addEventListener('click', () => manual(n)));
     pause.addEventListener('click', () => {
       paused = !paused;
@@ -72,4 +76,5 @@ if (!customElements.get('app-showcase')) customElements.define('app-showcase', A
 <style>
 app-showcase{display:block;border:1px solid var(--line,#e5e7eb);border-radius:5px;background:var(--paper,#fff);overflow:hidden;margin-block:22px;color:var(--ink,#111827)}figure{margin:0}figure[hidden]{display:none}figure>a{position:relative;display:flex;align-items:center;justify-content:center;aspect-ratio:1.85;background:#111;overflow:hidden}img{display:block;width:100%;height:100%;object-fit:contain}.expand{position:absolute;right:8px;bottom:8px;border-radius:4px;background:#111827d9;color:white;padding:3px 7px;font-size:15px}figcaption{display:flex;flex-direction:column;gap:4px;padding:14px 16px;min-height:78px;border-top:1px solid var(--line,#e5e7eb)}figcaption strong{font-size:13px;font-weight:600}figcaption span{font-size:11px;line-height:1.6;color:var(--muted,#6b7280)}.controls{display:flex;align-items:center;gap:6px;padding:6px 10px;border-top:1px solid var(--line,#e5e7eb)}button{display:flex;align-items:center;justify-content:center;min-width:32px;min-height:36px;border:0;border-radius:4px;background:transparent;color:inherit;font:inherit;font-size:15px;cursor:pointer}button:hover{background:var(--pale,#eff6ff)}button:focus-visible{outline:2px solid #3b82f6;outline-offset:-2px}.dots{display:flex;align-items:center;gap:0}.dots button{min-width:28px}.dots span{display:block;width:6px;height:6px;border-radius:50%;background:var(--muted,#6b7280)}.dots [aria-pressed=true] span{background:#3b82f6;width:18px;border-radius:4px}.pause{margin-left:auto;font-size:13px}.counter{font-size:10px;color:var(--muted,#6b7280);min-width:32px;text-align:center}@media(max-width:500px){figcaption{min-height:86px}}
 @media(max-width:500px){.controls{gap:3px;padding-inline:5px}.dots button{min-width:22px}}
+.slides{display:grid;position:relative;isolation:isolate}.slides figure{grid-area:1/1;opacity:0;visibility:hidden;transition:opacity .5s ease,visibility 0s linear .5s;z-index:0}.slides figure[data-active=true]{opacity:1;visibility:visible;transition:opacity .5s ease;z-index:1}.overlay-arrow{position:absolute;top:35%;transform:translateY(-50%);z-index:3;width:36px;height:48px;min-height:48px;border:1px solid #ffffff40;background:#111827d9;color:#ffffff;border-radius:6px;font-size:32px;line-height:1;box-shadow:0 2px 10px #0004;transition:background .2s ease}.overlay-arrow:hover{background:#2563eb}.overlay-arrow.previous{left:8px}.overlay-arrow.next{right:8px}@media(prefers-reduced-motion:reduce){.slides figure,.slides figure[data-active=true],.overlay-arrow{transition:none}}
 </style>

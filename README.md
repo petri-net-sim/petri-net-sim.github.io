@@ -42,7 +42,7 @@ After reviewing a translated guide, record its source version, for example `npm 
 
 The home page and both application overview pages use `src/components/Showcase.astro`. PNS presents generation, editing, simulation, statistics and Petri-object composition. The desktop gallery presents a classical net, simulation and Petri-object composition. Captions and controls are authored in English and Ukrainian.
 
-Slides advance every six seconds while visible. Hovering or keyboard focus pauses advancement. Manual navigation pauses autoplay; a play/pause control resumes it. Reduced-motion preferences disable autoplay initially. Screenshots open at full resolution. Static snapshots in `public/showcase/` are extracted from the existing project recordings without changing their contents; screenshots remain covered by the source project's license. Imported guides use static posters in place of animated promotional media. Source application repositories are unchanged.
+Slides advance every six seconds while visible with a half-second crossfade. Arrows over the screenshot, lower controls and keyboard arrow keys switch slides manually. Hovering or keyboard focus pauses advancement. Manual navigation pauses autoplay; a play/pause control resumes it. Reduced-motion preferences disable autoplay initially and remove transitions. Screenshots open at full resolution. Static snapshots in `public/showcase/` are extracted from the existing project recordings without changing their contents; screenshots remain covered by the source project's license. Imported guides use static posters in place of animated promotional media. Source application repositories are unchanged.
 
 ## Reference generation
 
