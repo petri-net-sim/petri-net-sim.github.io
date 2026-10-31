@@ -10,5 +10,7 @@
 - Run `npm run locales -- --record desktop/docs/desktop-ui` (with the relevant page path and no `.md` suffix) after reviewing a Ukrainian guide against its imported English source. This records `translationSourceHash`. Subsequent source changes are reported for review without overwriting the translation.
 - `npm run locales` preserves authored Ukrainian pages and refreshes only explicit English fallbacks. Review `.cache/localization-report.json` for missing translations and source changes. Do not describe English fallback pages as translated.
 - Keep downloads grounded in actual published assets and preserve independently versioned Java modules.
+- Use the applications' neutral gray surfaces and blue accents (`#2563eb` light, `#3b82f6` dark). Do not introduce a green site theme.
+- Keep release notes out of the main guide sidebar. Use concise, consistent English and Ukrainian navigation labels, with Overview first.
 - Run `npm test`, `npm run build` and `npm run verify` after relevant changes. Reference outputs require `python scripts/references.py` first.
 - Do not transfer source repositories as part of portal work.

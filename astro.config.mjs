@@ -6,10 +6,43 @@ import path from 'node:path';
 function guideItems(id) {
   const dir = path.resolve('src/content/docs', id);
   if (!existsSync(dir)) return [];
-  return readdirSync(dir, { recursive: true }).filter(file => file.endsWith('.md')).sort().map(file => {
+  const labels = {
+    desktop: {
+      'overview.md': ['Overview', 'Огляд'],
+      'contributing.md': ['Contributing', 'Участь у розробці'],
+      'docs/desktop-ui.md': ['Desktop editor', 'Настільний редактор'],
+      'docs/desktop-mcp.md': ['MCP integration', 'Інтеграція MCP'],
+      'docs/desktop-updates.md': ['Application updates', 'Оновлення застосунку'],
+      'docs/java-libraries.md': ['Java libraries', 'Java-бібліотеки'],
+      'docs/petri-object-models.md': ['Petri-object models', 'Петрі-об’єктні моделі'],
+      'docs/petri-server-integration.md': ['Simulation server', 'Сервер симуляції'],
+      'docs/training-data-export.md': ['Training data and review', 'Навчальні дані та перевірка']
+    },
+    web: {
+      'overview.md': ['Overview', 'Огляд'],
+      'contributing.md': ['Contributing', 'Участь у розробці'],
+      'docs/running.md': ['Installation and running', 'Встановлення та запуск'],
+      'docs/simulation.md': ['Simulation and statistics', 'Симуляція та статистика'],
+      'docs/configuration.md': ['Configuration', 'Налаштування'],
+      'docs/deployment.md': ['Deployment', 'Розгортання'],
+      'docs/integrations.md': ['HTTP API and MCP', 'HTTP API та MCP'],
+      'docs/modeling-skills.md': ['Modeling resources', 'Ресурси моделювання'],
+      'docs/petri-objects.md': ['Petri-object models', 'Петрі-об’єктні моделі'],
+      'docs/petriobjmodelpaint.md': ['Desktop interoperability', 'Обмін із настільним редактором'],
+      'docs/training-review.md': ['Training data and review', 'Навчальні дані та перевірка'],
+      'backend/overview.md': ['Backend development', 'Розробка серверної частини'],
+      'frontend/overview.md': ['Frontend development', 'Розробка інтерфейсу']
+    }
+  };
+  return readdirSync(dir, { recursive: true }).filter(file => file.endsWith('.md'))
+    .map(file => file.replaceAll('\\', '/'))
+    .filter(file => !file.startsWith('docs/releases/') && file !== 'docs/overview.md')
+    .sort((a, b) => a === 'overview.md' ? -1 : b === 'overview.md' ? 1 : a.localeCompare(b))
+    .map(file => {
     const text = readFileSync(path.join(dir, file), 'utf8');
     const title = JSON.parse(text.match(/^title: (.+)$/m)[1]);
-    return { label: title, slug: `${id}/${file.replaceAll('\\', '/').replace(/\.md$/, '').replaceAll('.', '')}` };
+    const label = labels[id]?.[file];
+    return { label: label?.[0] || title, ...(label ? { translations: { uk: label[1] } } : {}), slug: `${id}/${file.replace(/\.md$/, '').replaceAll('.', '')}` };
   });
 }
 
