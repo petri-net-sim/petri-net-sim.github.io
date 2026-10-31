@@ -58,7 +58,7 @@ export default defineConfig({
     favicon: '/favicon.svg',
     social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/petri-net-sim' }],
     customCss: ['./src/styles/docs.css'],
-    components: { MarkdownContent: './src/components/DocsContent.astro' },
+    components: { MarkdownContent: './src/components/DocsContent.astro', SocialIcons: './src/components/DocsRepositories.astro' },
     sidebar: [
       { label: 'Start here', translations: { uk: 'Початок роботи' }, items: [
         { label: 'Choose your tools', slug: 'start', translations: { uk: 'Оберіть інструменти' } },

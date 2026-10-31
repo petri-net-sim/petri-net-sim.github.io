@@ -1,6 +1,9 @@
 ---
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import RepositoryMenu from '../../../components/RepositoryMenu.astro';
+import ProjectLinks from '../../../components/ProjectLinks.astro';
+import sources from '../../../data/sources.json';
 export function getStaticPaths() {
   return ['desktop', 'web'].map(project => ({ params: { project }, props: { schema: JSON.parse(readFileSync(path.resolve('public/reference', project, 'openapi.json'), 'utf8')) } }));
 }
@@ -11,8 +14,9 @@ const methods = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options'];
 const operations = Object.entries(schema.paths).flatMap(([url, value]) => Object.entries(value as Record<string, any>).filter(([method]) => methods.includes(method)).map(([method, operation]) => ({ url, method, ...operation })));
 ---
 <!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>{name} API | Petri Net Simulation Portal</title><meta name="description" content={`Generated OpenAPI reference for ${name}. Endpoints, request bodies, response schemas and authentication.`}/><link rel="icon" href="/favicon.svg"/><link rel="canonical" href={`https://petri-net-sim.github.io/reference/${project}/`}/></head><body>
-<header><a href="/">← Petri Net Simulation Portal</a><a href="/integrations/">All integrations</a></header><main>
+<header><a href="/">← Petri Net Simulation Portal</a><a href="/integrations/">All integrations</a><RepositoryMenu /></header><main>
 <p class="eyebrow">GENERATED API REFERENCE</p><h1>{name}</h1><p class="intro">Version {schema.info.version}. This reference is generated from the application code during site publication.</p>
+<ProjectLinks repository={sources[project].repository} />
 <div class="links"><a href={`/reference/${project}/openapi.json`}>Download OpenAPI JSON ↓</a><a href={project === 'desktop' ? '/desktop/docs/petri-server-integration/' : '/web/docs/integrations/'}>Integration guide →</a></div>
 <label for="filter">Find an endpoint</label><input id="filter" type="search" placeholder="Search path, method or description"/><p id="count" aria-live="polite">{operations.length} operations</p>
 <section aria-label="API operations">{operations.map(operation => <details class="operation" data-search={`${operation.method} ${operation.url} ${operation.summary || ''} ${(operation.tags || []).join(' ')}`.toLowerCase()}><summary><span class={`method ${operation.method}`}>{operation.method.toUpperCase()}</span><code>{operation.url}</code><span class="summary">{operation.summary}</span></summary><div class="content">

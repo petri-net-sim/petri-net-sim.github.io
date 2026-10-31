@@ -1,0 +1,22 @@
+---
+import sources from '../data/sources.json';
+const { lang = 'en' } = Astro.props;
+const uk = lang === 'uk';
+const repositories = [
+  { name: 'PetriObjModelPaint', repository: sources.desktop.repository, description: uk ? 'Настільний редактор і Java-бібліотеки' : 'Desktop editor and Java libraries' },
+  { name: 'Petri Net Sim', repository: sources.web.repository, description: uk ? 'Вебредактор і генерація через LLM' : 'Web editor and LLM generation' },
+  { name: 'petri-modeling-skills', repository: sources.modeling.repository, description: uk ? 'Правила моделювання та патерни' : 'Modeling guidance and patterns' },
+  { name: 'Simulation Portal', repository: 'petri-net-sim/petri-net-sim.github.io', description: uk ? 'Код цього сайту' : 'Source for this website' }
+];
+---
+<details class="repository-menu">
+  <summary aria-label={uk ? 'Репозиторії на GitHub' : 'GitHub repositories'}><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.86c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.03A9.58 9.58 0 0 1 12 6.83c.85 0 1.71.11 2.51.34 1.91-1.3 2.75-1.03 2.75-1.03.55 1.38.2 2.4.1 2.65.64.7 1.03 1.6 1.03 2.69 0 3.84-2.33 4.69-4.56 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg><span>GitHub</span><span class="chevron" aria-hidden="true">⌄</span></summary>
+  <div class="repository-panel"><span class="panel-title">{uk ? 'РЕПОЗИТОРІЇ ПРОЄКТІВ' : 'PROJECT REPOSITORIES'}</span>{repositories.map(repo => <a href={`https://github.com/${repo.repository}`} aria-label={`${repo.name}: ${uk ? 'репозиторій на GitHub' : 'GitHub repository'}`}><span class="name">{repo.name}<span aria-hidden="true">↗</span></span><span class="description">{repo.description}</span></a>)}</div>
+</details>
+<script>
+  document.addEventListener('click', event => document.querySelectorAll<HTMLDetailsElement>('.repository-menu[open]').forEach(menu => { if (event.target instanceof Node && !menu.contains(event.target)) menu.open = false; }));
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') document.querySelectorAll<HTMLDetailsElement>('.repository-menu[open]').forEach(menu => { menu.open = false; menu.querySelector('summary')?.focus(); }); });
+</script>
+<style>
+.repository-menu{position:relative;color:var(--ink,var(--sl-color-text,#111827));font-family:'Segoe UI',system-ui,sans-serif;line-height:1.4}.repository-menu summary{display:flex;gap:7px;align-items:center;cursor:pointer;list-style:none;font-size:12px;font-weight:600;min-height:36px;white-space:nowrap}.repository-menu summary::-webkit-details-marker{display:none}.repository-menu summary:focus-visible{outline:2px solid #3b82f6;outline-offset:4px;border-radius:3px}.chevron{font-size:13px;color:var(--muted,var(--sl-color-gray-3,#6b7280))}.repository-panel{position:absolute;right:0;top:calc(100% + 10px);width:310px;max-width:calc(100vw - 30px);background:var(--paper,var(--sl-color-bg,#fff));border:1px solid var(--line,var(--sl-color-gray-5,#e5e7eb));border-radius:7px;padding:8px;box-shadow:0 12px 35px #0003;z-index:40}.panel-title{display:block;font-size:9px;letter-spacing:1.1px;padding:9px 10px;color:var(--muted,var(--sl-color-gray-3,#6b7280))}.repository-panel a{display:flex;flex-direction:column;gap:4px;padding:12px 10px;border-radius:4px;text-decoration:none;color:inherit}.repository-panel a:hover,.repository-panel a:focus-visible{background:var(--pale,var(--sl-color-accent-low,#eff6ff));outline:none}.name{display:flex;justify-content:space-between;gap:12px;font-size:13px;font-weight:600}.name>span{color:#3b82f6}.description{font-size:11px;color:var(--muted,var(--sl-color-gray-3,#6b7280))}
+</style>

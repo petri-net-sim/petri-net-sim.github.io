@@ -1,9 +1,14 @@
 ---
 import MarkdownContent from '@astrojs/starlight/components/MarkdownContent.astro';
 import Showcase from './Showcase.astro';
+import ProjectLinks from './ProjectLinks.astro';
+import sources from '../data/sources.json';
 const pathname = Astro.url.pathname;
 const app = /^\/(uk\/)?web\/overview\/$/.test(pathname) ? 'pns' : /^\/(uk\/)?desktop\/overview\/$/.test(pathname) ? 'pomp' : null;
 const lang = pathname.startsWith('/uk/') ? 'uk' : 'en';
+const project = pathname.match(/^\/(?:uk\/)?(desktop|web|modeling)\//)?.[1];
+const source = project ? sources[project] : null;
 ---
+{source && <ProjectLinks repository={source.repository} releaseUrl={project === 'modeling' ? undefined : `https://github.com/${source.repository}/releases`} lang={lang} />}
 {app && <div class="docs-showcase" style="--paper:var(--sl-color-black);--ink:var(--sl-color-white);--muted:var(--sl-color-gray-3);--line:var(--sl-color-gray-5);--pale:var(--sl-color-accent-low)"><Showcase app={app} lang={lang}/></div>}
 <MarkdownContent><slot /></MarkdownContent>

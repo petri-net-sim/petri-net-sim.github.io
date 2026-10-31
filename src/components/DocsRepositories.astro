@@ -1,0 +1,4 @@
+---
+import RepositoryMenu from './RepositoryMenu.astro';
+---
+<RepositoryMenu lang={Astro.url.pathname.startsWith('/uk/') ? 'uk' : 'en'} />
