@@ -46,7 +46,12 @@ class AppShowcase extends HTMLElement {
     this.querySelector('[data-prev]')!.addEventListener('click', () => manual(index - 1));
     this.querySelector('[data-next]')!.addEventListener('click', () => manual(index + 1));
     dots.forEach((dot, n) => dot.addEventListener('click', () => manual(n)));
-    pause.addEventListener('click', () => { paused = !paused; updatePause(); });
+    pause.addEventListener('click', () => {
+      paused = !paused;
+      // Explicit playback must work while the play button still has focus.
+      if (!paused) { focused = false; hovering = false; }
+      updatePause();
+    });
     this.addEventListener('mouseenter', () => hovering = true);
     this.addEventListener('mouseleave', () => hovering = false);
     this.addEventListener('focusin', () => focused = true);
