@@ -25,7 +25,7 @@ Downloads are resolved from actual GitHub Release assets. Java modules retain th
 
 ## Languages and translations
 
-English is the default language. Ukrainian is available through the language selector. Ukrainian portal pages are maintained with the site. Imported guides can be translated automatically using the configured LLM provider, with translations cached by source content hash. Machine translations are labeled. If a translation is unavailable, the English original is displayed with a notice.
+English is the default language. Ukrainian is available through the language selector. Both language versions are written and updated together by contributors and their coding agents. Publication preserves authored translations and reports source changes for review. If a translation is unavailable, the English original is displayed with a notice.
 
 ## Licenses
 

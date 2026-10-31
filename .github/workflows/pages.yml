@@ -43,29 +43,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GIT_LFS_SKIP_SMUDGE: '0'
-      - name: Restore translation cache
-        id: translations
-        uses: actions/cache/restore@v4
-        with:
-          path: .cache/translations
-          key: translations-v2-${{ github.run_id }}
-          restore-keys: translations-v2-
-      - name: Translate changed guides
-        if: github.event_name != 'pull_request'
-        run: npm run translate
-        env:
-          TRANSLATION_API_KEY: ${{ secrets.TRANSLATION_API_KEY }}
-          TRANSLATION_API_URL: ${{ vars.TRANSLATION_API_URL }}
-          TRANSLATION_MODEL: ${{ vars.TRANSLATION_MODEL }}
-      - name: Render cached translations for pull requests
-        if: github.event_name == 'pull_request'
-        run: npm run translate -- --cache-only
-      - name: Save translation cache
-        if: github.event_name != 'pull_request'
-        uses: actions/cache/save@v4
-        with:
-          path: .cache/translations
-          key: translations-v2-${{ github.run_id }}
+      - name: Preserve authored translations and refresh English fallbacks
+        run: npm run locales
       - name: Generate OpenAPI and Java references
         run: python scripts/references.py
       - run: npm test

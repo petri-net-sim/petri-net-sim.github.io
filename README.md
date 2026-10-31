@@ -17,7 +17,7 @@ The repository includes a documentation snapshot. To refresh it from published a
 
 ```sh
 npm run sync
-npm run translate
+npm run locales
 ```
 
 For sibling development checkouts, run `npm run sync -- --local`. Update `sources.json` when a project changes repository location. Source repositories stay in their current owners' accounts.
@@ -28,17 +28,15 @@ GitHub Pages source must be **GitHub Actions**. `.github/workflows/pages.yml` ch
 
 Builds import guides from release tags, resolve download assets through GitHub Releases, export both applications' OpenAPI schemas, generate Java API reference documentation, build the site and verify internal links. Broken references stop publication, preserving the previous deployment. Application docs correspond to published releases; shared modeling materials follow their default branch. Each imported page records its exact source commit.
 
-## Automatic Ukrainian translation
+## English and Ukrainian authoring
 
-Add the following under repository Settings > Secrets and variables > Actions:
+Agents write and update both languages in the same change. No translation provider, API key or external LLM call is required by the publication workflow.
 
-- Secret `TRANSLATION_API_KEY`: your chosen provider key.
-- Variable `TRANSLATION_API_URL`: the full HTTPS Chat Completions endpoint of an OpenAI-compatible provider.
-- Variable `TRANSLATION_MODEL`: the provider's model identifier.
+Portal pages are paired between `src/content/docs/` and `src/content/docs/uk/`. Home page text is paired in `src/components/Home.astro`. Application guides retain their upstream English source; Ukrainian versions are authored at the matching relative path under `src/content/docs/uk/`.
 
-Then run the publication workflow. Translation sends only public documentation to that provider. Provider usage may be billed to its account. Translations are cached by source hash, language, prompt version and model. Only changed pages are translated, with a default cap of 40 new pages per run. Code blocks, inline code and link destinations must remain unchanged or the page falls back to its English original. Machine translations are labeled. Without provider settings, publication still succeeds with a clear English fallback notice in Ukrainian navigation.
+`npm run locales` preserves authored translations. Pages without a Ukrainian translation show the English original with an explicit notice. Remove that notice when replacing a fallback with a real translation. Keep code, commands and API identifiers unchanged and localize internal documentation links to `/uk/`.
 
-Portal introduction pages in `src/content/docs/uk` and the Ukrainian home page are maintained as site content. Automatic translation only writes the imported `desktop`, `web` and `modeling` subtrees.
+After reviewing a translated guide, record its source version, for example `npm run locales -- --record desktop/docs/desktop-ui`. This stores `translationSourceHash` in its frontmatter. Future changes to the English source are listed in `.cache/localization-report.json` and the CI log for agent review. They never overwrite authored Ukrainian text. `AGENTS.md` documents the editing workflow.
 
 ## Reference generation
 
