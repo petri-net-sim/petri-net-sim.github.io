@@ -1,0 +1,56 @@
+{
+  "desktop": {
+    "repository": "StetsenkoInna/PetriObjModelPaint",
+    "label": "PetriObjModelPaint",
+    "revision": "9dab83739aaf6df8c0268a962dc65fabeaa98dbd",
+    "release": "v2.8.0",
+    "releaseUrl": "https://github.com/StetsenkoInna/PetriObjModelPaint/releases/tag/v2.8.0",
+    "downloads": [
+      {
+        "name": "petri-swing-ui-2.8.0-linux.zip",
+        "url": "https://github.com/StetsenkoInna/PetriObjModelPaint/releases/download/v2.8.0/petri-swing-ui-2.8.0-linux.zip",
+        "platform": "linux",
+        "size": 14568336
+      },
+      {
+        "name": "petri-swing-ui-2.8.0-macos.zip",
+        "url": "https://github.com/StetsenkoInna/PetriObjModelPaint/releases/download/v2.8.0/petri-swing-ui-2.8.0-macos.zip",
+        "platform": "macos",
+        "size": 14131024
+      },
+      {
+        "name": "petri-swing-ui-2.8.0-windows.zip",
+        "url": "https://github.com/StetsenkoInna/PetriObjModelPaint/releases/download/v2.8.0/petri-swing-ui-2.8.0-windows.zip",
+        "platform": "windows",
+        "size": 15247047
+      }
+    ],
+    "versions": {
+      "petri-math": "2.6.0",
+      "petri-api": "2.6.0",
+      "petri-model": "2.8.0",
+      "petri-server": "2.6.0"
+    },
+    "documents": 14
+  },
+  "web": {
+    "repository": "sergiorbk/petri-net-sim",
+    "label": "Petri Net Sim",
+    "revision": "6559ad86f3b2b6d433fc326f08daf7d862d3777c",
+    "release": "v1.4.0",
+    "releaseUrl": "https://github.com/sergiorbk/petri-net-sim/releases/tag/v1.4.0",
+    "downloads": [],
+    "versions": {},
+    "documents": 15
+  },
+  "modeling": {
+    "repository": "sergiorbk/petri-modeling-skills",
+    "label": "Modeling resources",
+    "revision": "e3b72905e7866abb531881b204e2a81a1554b0a0",
+    "release": null,
+    "releaseUrl": "https://github.com/sergiorbk/petri-modeling-skills/releases/latest",
+    "downloads": [],
+    "versions": {},
+    "documents": 8
+  }
+}

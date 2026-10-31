@@ -1,0 +1,6806 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Petri Net Sim",
+    "description": "Text to PNML converter API - Converts textual descriptions of queueing systems into Petri Net models in PNML format",
+    "version": "1.4.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Basic health check",
+        "description": "Returns basic application health status",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/live": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Liveness probe",
+        "description": "Kubernetes liveness probe - checks if application is alive",
+        "operationId": "liveness_health_live_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Liveness Health Live Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Readiness probe",
+        "description": "Kubernetes readiness probe - checks if application can handle traffic",
+        "operationId": "readiness_health_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailedHealthStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health/startup": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Startup probe",
+        "description": "Kubernetes startup probe - checks if application has started",
+        "operationId": "startup_health_startup_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Startup Health Startup Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/training/inspect": {
+      "post": {
+        "tags": [
+          "v1",
+          "training"
+        ],
+        "summary": "Inspect",
+        "operationId": "inspect_api_v1_training_inspect_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArchiveBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/training/compare": {
+      "post": {
+        "tags": [
+          "v1",
+          "training"
+        ],
+        "summary": "Compare",
+        "operationId": "compare_api_v1_training_compare_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompareBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/training/image": {
+      "post": {
+        "tags": [
+          "v1",
+          "training"
+        ],
+        "summary": "Image",
+        "operationId": "image_api_v1_training_image_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImageBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/training/export": {
+      "post": {
+        "tags": [
+          "v1",
+          "training"
+        ],
+        "summary": "Export",
+        "operationId": "export_api_v1_training_export_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/training/run": {
+      "post": {
+        "tags": [
+          "v1",
+          "training"
+        ],
+        "summary": "Run",
+        "operationId": "run_api_v1_training_run_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/signup": {
+      "post": {
+        "tags": [
+          "v1",
+          "auth"
+        ],
+        "summary": "Register a new user with email and password",
+        "description": "Create a new account with email + password and return a JWT token pair.",
+        "operationId": "signup_api_v1_auth_signup_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_TokenPairResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "v1",
+          "auth"
+        ],
+        "summary": "Log in with email and password",
+        "description": "Exchange email + password for a JWT token pair.",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_TokenPairResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "v1",
+          "auth"
+        ],
+        "summary": "Get current user info",
+        "description": "Get current authenticated user info.\n\nRequires Bearer token (API key or JWT) in Authorization header.",
+        "operationId": "get_me_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_UserResponse_"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "v1",
+          "auth"
+        ],
+        "summary": "Update current user profile",
+        "description": "Update the authenticated user's profile fields.",
+        "operationId": "update_me_api_v1_auth_me_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_UserResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/api-keys": {
+      "get": {
+        "tags": [
+          "v1",
+          "auth"
+        ],
+        "summary": "List API keys",
+        "description": "List all API keys for the authenticated user.",
+        "operationId": "list_api_keys_api_v1_auth_api_keys_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_list_ApiKeyListItem__"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "v1",
+          "auth"
+        ],
+        "summary": "Create a new API key",
+        "description": "Create a new API key for the authenticated user.\n\nThe raw key is returned only once — store it securely.",
+        "operationId": "create_api_key_api_v1_auth_api_keys_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiKeyCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_ApiKeyCreateResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/api-keys/{key_id}": {
+      "delete": {
+        "tags": [
+          "v1",
+          "auth"
+        ],
+        "summary": "Revoke an API key",
+        "description": "Revoke (deactivate) an API key.",
+        "operationId": "revoke_api_key_api_v1_auth_api_keys__key_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "key_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Key Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/oauth/google/authorize": {
+      "get": {
+        "tags": [
+          "v1",
+          "auth"
+        ],
+        "summary": "Get Google OAuth authorization URL",
+        "description": "Generate a Google OAuth authorization URL for the frontend to redirect to.",
+        "operationId": "google_authorize_api_v1_auth_oauth_google_authorize_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_OAuthAuthorizeResponse_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/oauth/google/callback": {
+      "get": {
+        "tags": [
+          "v1",
+          "auth"
+        ],
+        "summary": "Google OAuth callback",
+        "description": "Handle the Google OAuth callback, exchange code for tokens, and redirect to frontend.",
+        "operationId": "google_callback_api_v1_auth_oauth_google_callback_get",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Authorization code from Google",
+              "title": "Code"
+            },
+            "description": "Authorization code from Google"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "CSRF state parameter",
+              "title": "State"
+            },
+            "description": "CSRF state parameter"
+          }
+        ],
+        "responses": {
+          "307": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "v1",
+          "auth"
+        ],
+        "summary": "Refresh access token",
+        "description": "Exchange a valid refresh token for a new token pair.",
+        "operationId": "refresh_token_api_v1_auth_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_TokenPairResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/config": {
+      "get": {
+        "tags": [
+          "v1",
+          "config"
+        ],
+        "summary": "Get public runtime configuration",
+        "description": "Return non-secret runtime configuration. Unauthenticated by design --\nthe frontend needs this before it knows whether it has (or needs) a\nsession at all.",
+        "operationId": "get_config_api_v1_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_PublicConfigResponse_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/llm-credentials": {
+      "get": {
+        "tags": [
+          "v1",
+          "llm-credentials"
+        ],
+        "summary": "List the current user's credential profiles",
+        "operationId": "list_credentials_api_v1_llm_credentials_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_list_LLMCredentialResponse__"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "v1",
+          "llm-credentials"
+        ],
+        "summary": "Create a new BYOK credential profile",
+        "description": "Persist a credential profile. The raw API key is encrypted at rest.",
+        "operationId": "create_credential_api_v1_llm_credentials_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLLMCredentialRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_LLMCredentialResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/llm-credentials/{credential_id}": {
+      "get": {
+        "tags": [
+          "v1",
+          "llm-credentials"
+        ],
+        "summary": "Fetch a single credential profile",
+        "operationId": "get_credential_api_v1_llm_credentials__credential_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "credential_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Credential Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_LLMCredentialResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "v1",
+          "llm-credentials"
+        ],
+        "summary": "Update a credential profile (partial)",
+        "operationId": "update_credential_api_v1_llm_credentials__credential_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "credential_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Credential Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLLMCredentialRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_LLMCredentialResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "v1",
+          "llm-credentials"
+        ],
+        "summary": "Soft-delete a credential profile",
+        "operationId": "delete_credential_api_v1_llm_credentials__credential_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "credential_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Credential Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/llm-credentials/{credential_id}/test": {
+      "post": {
+        "tags": [
+          "v1",
+          "llm-credentials"
+        ],
+        "summary": "Send a ping completion to verify the credential",
+        "operationId": "test_credential_api_v1_llm_credentials__credential_id__test_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "credential_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Credential Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_TestLLMCredentialResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions": {
+      "get": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "List user sessions",
+        "description": "List chat sessions for the authenticated user with cursor-style pagination.",
+        "operationId": "list_sessions_api_v1_sessions_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 30,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_SessionListResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/messages": {
+      "get": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "Get chat message history for a session",
+        "description": "Return the stored message history for a session.\n\nReturns an empty list when the session exists but no messages have been\nsynced yet (new session or pre-014 row).",
+        "operationId": "get_session_messages_api_v1_sessions__session_id__messages_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_SessionMessagesResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "Sync chat message history for a session",
+        "description": "Replace the stored message history for a session. Called by the frontend after each turn.",
+        "operationId": "sync_session_messages_api_v1_sessions__session_id__messages_put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncMessagesRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/share": {
+      "patch": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "Update session sharing settings",
+        "description": "Set visibility for a session. Returns the share token for building the share URL.",
+        "operationId": "update_session_share_api_v1_sessions__session_id__share_patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShareRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_ShareResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}": {
+      "patch": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "Update session",
+        "description": "Update session title.",
+        "operationId": "update_session_api_v1_sessions__session_id__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SessionUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "Delete session",
+        "description": "Delete a chat session.",
+        "operationId": "delete_session_api_v1_sessions__session_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/snapshots": {
+      "get": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "List net snapshots for a session",
+        "description": "Return all versioned net snapshots for a session, oldest first.",
+        "operationId": "list_session_snapshots_api_v1_sessions__session_id__snapshots_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_list_NetSnapshotListItem__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/net": {
+      "get": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "Get session Petri net",
+        "description": "Return the current Petri net structure for a session.",
+        "operationId": "get_session_net_api_v1_sessions__session_id__net_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/pnml": {
+      "get": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "Export a session's Petri net as PNML",
+        "description": "Export the session's current model as a downloadable PNML XML file.\n\nComposed dialect (one page per Petri-object, plus the free pool) is\nused automatically when the session has any object or link -- the\nsame dialect selection PetriNetSession.export_pnml already applies\neverywhere else (agent tools, chat, MCP). A flat session gets the\nsingle flat dialect.",
+        "operationId": "get_session_pnml_api_v1_sessions__session_id__pnml_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/simulate": {
+      "post": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "Stream a simulation for the session Petri net",
+        "description": "Stream a discrete-event simulation for the session's Petri net.\n\nReturns ``text/event-stream`` chunks terminated by ``data: [DONE]``.\n\n**Two snapshot modes**\n\n* **Time-based** (default): one snapshot every ``time_step`` simulation units.\n* **Step-based** (scientific): one snapshot every ``snapshot_interval`` transition firings.",
+        "operationId": "simulate_session_api_v1_sessions__session_id__simulate_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          },
+          {
+            "name": "simulation_time",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Simulation time units",
+              "default": 3600.0,
+              "title": "Simulation Time"
+            },
+            "description": "Simulation time units"
+          },
+          {
+            "name": "time_step",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Time-based mode: emit a snapshot every this many simulation time units. Total snapshots ≈ simulation_time / time_step. Ignored when snapshot_interval is also set.",
+              "default": 1.0,
+              "title": "Time Step"
+            },
+            "description": "Time-based mode: emit a snapshot every this many simulation time units. Total snapshots ≈ simulation_time / time_step. Ignored when snapshot_interval is also set."
+          },
+          {
+            "name": "snapshot_interval",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Scientific/step-based mode: emit a snapshot every N discrete transition firings. When set, overrides time_step.",
+              "title": "Snapshot Interval"
+            },
+            "description": "Scientific/step-based mode: emit a snapshot every N discrete transition firings. When set, overrides time_step."
+          },
+          {
+            "name": "animation_delay",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "maximum": 10.0,
+              "minimum": 0.0,
+              "description": "Real-time pause (seconds) inserted after each snapshot. 0 = stream as fast as possible (scientific / batch use).",
+              "default": 0.0,
+              "title": "Animation Delay"
+            },
+            "description": "Real-time pause (seconds) inserted after each snapshot. 0 = stream as fast as possible (scientific / batch use)."
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimulateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/simulate/precompute": {
+      "post": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "Pre-run session simulation, return all snapshots as JSON",
+        "description": "Run the full simulation synchronously and return all snapshots as a JSON array.",
+        "operationId": "simulate_session_precompute_api_v1_sessions__session_id__simulate_precompute_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          },
+          {
+            "name": "simulation_time",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Simulation time units",
+              "default": 3600.0,
+              "title": "Simulation Time"
+            },
+            "description": "Simulation time units"
+          },
+          {
+            "name": "time_step",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Snapshot every this many sim units (time mode)",
+              "default": 1.0,
+              "title": "Time Step"
+            },
+            "description": "Snapshot every this many sim units (time mode)"
+          },
+          {
+            "name": "snapshot_interval",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Snapshot every N transition firings (scientific mode). Overrides time_step when set.",
+              "title": "Snapshot Interval"
+            },
+            "description": "Snapshot every N transition firings (scientific mode). Overrides time_step when set."
+          },
+          {
+            "name": "expand_phases",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "When true, each firing phase (act_in / act_out) becomes its own snapshot so the UI can animate one arc movement per step.",
+              "default": false,
+              "title": "Expand Phases"
+            },
+            "description": "When true, each firing phase (act_in / act_out) becomes its own snapshot so the UI can animate one arc movement per step."
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimulateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Simulate Session Precompute Api V1 Sessions  Session Id  Simulate Precompute Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/shared/{share_token}": {
+      "get": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "Get a shared session by share token",
+        "description": "Public read-only view of a session via its share token.\n\nReturns 404 when the token is unknown or the session is private.\nNo authentication required for link_only and public sessions.",
+        "operationId": "get_shared_session_api_v1_sessions_shared__share_token__get",
+        "parameters": [
+          {
+            "name": "share_token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Share Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_SharedSessionView_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/shared/{share_token}/snapshots": {
+      "get": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "List net snapshots for a shared session",
+        "description": "Return all versioned net snapshots for a shared session. No authentication required.",
+        "operationId": "list_shared_session_snapshots_api_v1_sessions_shared__share_token__snapshots_get",
+        "parameters": [
+          {
+            "name": "share_token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Share Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_list_NetSnapshotListItem__"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/shared/{share_token}/snapshots/{snapshot_id}": {
+      "get": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "Get net_data for a specific snapshot of a shared session",
+        "description": "Return net_data for a specific snapshot. No authentication required for shared sessions.",
+        "operationId": "get_shared_snapshot_net_api_v1_sessions_shared__share_token__snapshots__snapshot_id__get",
+        "parameters": [
+          {
+            "name": "share_token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Share Token"
+            }
+          },
+          {
+            "name": "snapshot_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Snapshot Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/shared/{share_token}/simulate": {
+      "post": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "Stream a simulation for a shared session",
+        "description": "Stream a simulation for a publicly shared session.\n\nNo authentication required for link_only and public sessions.\nResolution order for net: snapshot_id > session's current net_data.",
+        "operationId": "simulate_shared_session_api_v1_sessions_shared__share_token__simulate_post",
+        "parameters": [
+          {
+            "name": "share_token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Share Token"
+            }
+          },
+          {
+            "name": "simulation_time",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "default": 3600.0,
+              "title": "Simulation Time"
+            }
+          },
+          {
+            "name": "time_step",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "default": 1.0,
+              "title": "Time Step"
+            }
+          },
+          {
+            "name": "snapshot_interval",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Snapshot Interval"
+            }
+          },
+          {
+            "name": "animation_delay",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "maximum": 10.0,
+              "minimum": 0.0,
+              "default": 0.0,
+              "title": "Animation Delay"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimulateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/training-data": {
+      "post": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "Download task-scoped training data",
+        "operationId": "export_session_training_data_api_v1_sessions__session_id__training_data_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainingExportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/exports/image": {
+      "post": {
+        "tags": [
+          "v1",
+          "sessions"
+        ],
+        "summary": "Render current editor model as PNG",
+        "operationId": "export_network_image_api_v1_sessions_exports_image_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NetworkImageRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/nets": {
+      "get": {
+        "tags": [
+          "v1",
+          "user-nets"
+        ],
+        "summary": "List user Petri nets",
+        "operationId": "list_user_nets_api_v1_nets_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 24,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "updated_at",
+                "created_at"
+              ],
+              "type": "string",
+              "default": "updated_at",
+              "title": "Sort By"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_UserNetListResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "v1",
+          "user-nets"
+        ],
+        "summary": "Create a user Petri net",
+        "operationId": "create_user_net_api_v1_nets_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserNetCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_UserNetDetail_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/nets/shared/{share_token}": {
+      "get": {
+        "tags": [
+          "v1",
+          "user-nets"
+        ],
+        "summary": "Get a shared Petri net by share token (no auth required)",
+        "description": "Public read-only view of a net via its share token. Returns 404 for private nets.",
+        "operationId": "get_shared_net_api_v1_nets_shared__share_token__get",
+        "parameters": [
+          {
+            "name": "share_token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Share Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_SharedNetView_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/nets/{net_id}/share": {
+      "patch": {
+        "tags": [
+          "v1",
+          "user-nets"
+        ],
+        "summary": "Update sharing settings for a user Petri net",
+        "operationId": "share_user_net_api_v1_nets__net_id__share_patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "net_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Net Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NetShareRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_NetShareResponse_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/nets/{net_id}": {
+      "get": {
+        "tags": [
+          "v1",
+          "user-nets"
+        ],
+        "summary": "Get a user Petri net",
+        "operationId": "get_user_net_api_v1_nets__net_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "net_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Net Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_UserNetDetail_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "v1",
+          "user-nets"
+        ],
+        "summary": "Update a user Petri net",
+        "operationId": "update_user_net_api_v1_nets__net_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "net_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Net Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserNetUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_UserNetDetail_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "v1",
+          "user-nets"
+        ],
+        "summary": "Delete a user Petri net",
+        "operationId": "delete_user_net_api_v1_nets__net_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "net_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Net Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/nets/{net_id}/pnml": {
+      "get": {
+        "tags": [
+          "v1",
+          "user-nets"
+        ],
+        "summary": "Export a user Petri net as PNML",
+        "description": "Export the net as a downloadable PNML XML file -- composed dialect\nautomatically when the net uses Petri-objects, same as the session\nroute's own dialect selection.",
+        "operationId": "get_user_net_pnml_api_v1_nets__net_id__pnml_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "net_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Net Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/petri-objects": {
+      "get": {
+        "tags": [
+          "v1",
+          "petri-objects"
+        ],
+        "summary": "List visible Petri objects",
+        "operationId": "list_petri_objects_api_v1_petri_objects_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_list_PetriObjectSummary__"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "v1",
+          "petri-objects"
+        ],
+        "summary": "Create a user-custom Petri object",
+        "operationId": "create_petri_object_api_v1_petri_objects_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PetriObjectCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_PetriObjectDetail_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/petri-objects/{object_id}": {
+      "get": {
+        "tags": [
+          "v1",
+          "petri-objects"
+        ],
+        "summary": "Get a Petri object",
+        "operationId": "get_petri_object_api_v1_petri_objects__object_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "object_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Object Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_PetriObjectDetail_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "v1",
+          "petri-objects"
+        ],
+        "summary": "Update a user-custom Petri object",
+        "operationId": "update_petri_object_api_v1_petri_objects__object_id__put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "object_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Object Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PetriObjectUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_PetriObjectDetail_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "v1",
+          "petri-objects"
+        ],
+        "summary": "Delete a user-custom Petri object",
+        "operationId": "delete_petri_object_api_v1_petri_objects__object_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "object_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Object Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiSuccessResponse_dict_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pnml/parse": {
+      "post": {
+        "tags": [
+          "v1",
+          "pnml"
+        ],
+        "summary": "Parse a PNML document into net_data, without touching any session",
+        "description": "Parse *xml* (PNML, from PetriObjModelPaint or from this\napplication's own export) into the frontend-shape net_data dict this\napplication already reads and writes everywhere else, plus every\nnon-fatal warning parse_pnml encountered along the way.\n\nRaises 400 for the two structural failures the reader cannot soft-fix\naround: a document with no <pnml> root, or a <pnml> with no <net>.\nEverything else it cannot make full sense of is downgraded to a\nwarning in the response instead of failing the whole request.",
+        "operationId": "parse_pnml_endpoint_api_v1_pnml_parse_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PnmlParseBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Parse Pnml Endpoint Api V1 Pnml Parse Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/simulate": {
+      "post": {
+        "tags": [
+          "v1",
+          "simulation"
+        ],
+        "summary": "Stream a simulation for an arbitrary Petri net",
+        "description": "Stream a discrete-event simulation for the provided Petri net.\n\nUnlike the session-scoped endpoint, this does not require or create a\nsession.  The caller supplies the full net JSON in the request body.\n\nReturns ``text/event-stream`` chunks of shape\n``{current_time, step_number, markings, buffers, progress, fired_transitions,\nfiring_sequence}`` terminated by ``data: [DONE]``.  ``firing_sequence`` is\nthe ordered list of atomic highlight steps since the previous frame; it is\nempty when nothing fired, or when a remote backend does not report phases.",
+        "operationId": "simulate_standalone_api_v1_simulate_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "simulation_time",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Simulation time units",
+              "default": 3600.0,
+              "title": "Simulation Time"
+            },
+            "description": "Simulation time units"
+          },
+          {
+            "name": "time_step",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Time-based mode: emit a snapshot every this many simulation time units. Ignored when snapshot_interval is also set.",
+              "default": 1.0,
+              "title": "Time Step"
+            },
+            "description": "Time-based mode: emit a snapshot every this many simulation time units. Ignored when snapshot_interval is also set."
+          },
+          {
+            "name": "snapshot_interval",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Scientific/step-based mode: emit a snapshot every N discrete transition firings. When set, overrides time_step.",
+              "title": "Snapshot Interval"
+            },
+            "description": "Scientific/step-based mode: emit a snapshot every N discrete transition firings. When set, overrides time_step."
+          },
+          {
+            "name": "animation_delay",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "maximum": 10.0,
+              "minimum": 0.0,
+              "description": "Real-time pause (seconds) inserted after each snapshot. 0 = stream as fast as possible.",
+              "default": 0.0,
+              "title": "Animation Delay"
+            },
+            "description": "Real-time pause (seconds) inserted after each snapshot. 0 = stream as fast as possible."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StandaloneSimulateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/simulate/precompute": {
+      "post": {
+        "tags": [
+          "v1",
+          "simulation"
+        ],
+        "summary": "Pre-run a simulation and return all snapshots as JSON",
+        "description": "Run the full simulation synchronously and return all snapshots as a JSON array.\n\nUnlike the streaming endpoint this response is a plain JSON object so the\nclient knows the total snapshot count before starting playback.  Intended\nfor stepped / manual-pacing playback where the UI must display ``X / N``.",
+        "operationId": "simulate_precompute_api_v1_simulate_precompute_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "simulation_time",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Simulation time units",
+              "default": 3600.0,
+              "title": "Simulation Time"
+            },
+            "description": "Simulation time units"
+          },
+          {
+            "name": "time_step",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Snapshot every this many sim units (time mode)",
+              "default": 1.0,
+              "title": "Time Step"
+            },
+            "description": "Snapshot every this many sim units (time mode)"
+          },
+          {
+            "name": "snapshot_interval",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Snapshot every N transition firings (scientific mode). Overrides time_step when set.",
+              "title": "Snapshot Interval"
+            },
+            "description": "Snapshot every N transition firings (scientific mode). Overrides time_step when set."
+          },
+          {
+            "name": "expand_phases",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "When true, each firing phase (act_in / act_out) becomes its own snapshot so the UI can animate one arc movement per step.",
+              "default": false,
+              "title": "Expand Phases"
+            },
+            "description": "When true, each firing phase (act_in / act_out) becomes its own snapshot so the UI can animate one arc movement per step."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StandaloneSimulateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Simulate Precompute Api V1 Simulate Precompute Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/simulate/composed": {
+      "post": {
+        "tags": [
+          "v1",
+          "simulation-composed"
+        ],
+        "summary": "Stream a simulation for a composed Petri-object model (v2)",
+        "description": "Stream a discrete-event simulation for a composed Petri-object model.\n\nMirrors the flat-net endpoint's remote/local split: with no\n``SIMULATION_REMOTE_URL`` configured, or when it's unreachable and\n``SIMULATION_REMOTE_FALLBACK`` is set, this runs on the built-in local\nengine (``build_composed_sim_net`` + ``PetriSimulator``) instead of\npetri-server. The one gap is placeToTransition links, which the local\nengine does not support (see ``ComposedSimulationUnsupported``) — a model\nusing one always needs the remote engine.",
+        "operationId": "simulate_composed_api_v1_simulate_composed_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "simulation_time",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "maximum": 1000000.0,
+              "exclusiveMinimum": 0,
+              "default": 3600.0,
+              "title": "Simulation Time"
+            }
+          },
+          {
+            "name": "time_step",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "default": 1.0,
+              "title": "Time Step"
+            }
+          },
+          {
+            "name": "snapshot_interval",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Snapshot Interval"
+            }
+          },
+          {
+            "name": "animation_delay",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "maximum": 10.0,
+              "minimum": 0.0,
+              "default": 0.0,
+              "title": "Animation Delay"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ComposedSimulateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/simulate/composed/preview": {
+      "post": {
+        "tags": [
+          "v1",
+          "simulation-composed"
+        ],
+        "summary": "Export + parse a composed model, no simulation run",
+        "description": "Cheap way to verify a composed model (including its links) before\nspending a full simulation run on it.\n\nWith ``SIMULATION_REMOTE_URL`` configured, round-trips the generated\nPNML through petri-server's real ``POST /api/v2/model/parse``. With no\nremote configured, validates locally instead (see `_local_preview`):\nthe exact same PNML this route would otherwise have sent to\npetri-server is round-tripped through this application's own importer.\nEither way the response states which validator ran (petri-server's own\nresponse shape for the remote path; a ``\"validator\": \"local\"`` field\nfor the fallback).",
+        "operationId": "preview_composed_api_v1_simulate_composed_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ComposedSimulateBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Preview Composed Api V1 Simulate Composed Preview Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/chat/completions": {
+      "post": {
+        "tags": [
+          "openai",
+          "OpenAI Compatible"
+        ],
+        "summary": "Chat Completions",
+        "description": "OpenAI-compatible chat completion endpoint.\n\nSupports both streaming (stream=true) and non-streaming modes.\n\nCredentials are resolved before any agent invocation (BYOK-only):\n  - ``metadata.llm_credential_id`` → BYOK using the user's profile.\n  - missing → 402 byok_required.",
+        "operationId": "chat_completions_api_v1_chat_completions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatCompletionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatCompletionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/models": {
+      "get": {
+        "tags": [
+          "openai",
+          "OpenAI Compatible"
+        ],
+        "summary": "List Models",
+        "description": "List available models.",
+        "operationId": "list_models_api_v1_models_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelListResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/files/{file_id}": {
+      "get": {
+        "tags": [
+          "openai",
+          "OpenAI Compatible"
+        ],
+        "summary": "Download File",
+        "description": "Download a generated PNML file.\n\nAuthorization is performed via a signed ?token query parameter so that\ndownload links can be opened directly in a browser (where the Authorization\nheader is not available). The token is single-purpose (type=download),\nshort-lived, and bound to the specific file_id and user_id.",
+        "operationId": "download_file_api_v1_files__file_id__get",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Id"
+            }
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Signed download token (emitted in chat download links).",
+              "title": "Token"
+            },
+            "description": "Signed download token (emitted in chat download links)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgentEventDelta": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "tool_call",
+              "tool_result"
+            ],
+            "title": "Type"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "input": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Input"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "running",
+                  "success",
+                  "error"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "output": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "id"
+        ],
+        "title": "AgentEventDelta",
+        "description": "Non-standard streaming extension: agent reasoning step.\n\nEmitted as `delta.agent_event` on chunk choices so OpenAI-compatible\nclients that don't know about it simply ignore the field. The\nPetri Net Sim UI renders each event as a step card inside the assistant\nmessage. Tool-call events ride on AIMessage tool_calls (Anthropic\ntool_use blocks parsed by LangChain); tool_result events ride on\nToolMessage outputs from the LangGraph tool node."
+      },
+      "ApiKeyCreateRequest": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "Optional label for the key"
+          },
+          "llm_credential_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Llm Credential Id",
+            "description": "Bind this key to a specific LLM credential profile. Requests authenticated with this key will use that credential automatically, without needing metadata.llm_credential_id. Omit to create an unbound key (shared key or metadata-driven BYOK)."
+          }
+        },
+        "type": "object",
+        "title": "ApiKeyCreateRequest",
+        "description": "Request to create a new API key."
+      },
+      "ApiKeyCreateResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id",
+            "description": "API key ID"
+          },
+          "key": {
+            "type": "string",
+            "title": "Key",
+            "description": "Raw API key — save it now, it will not be shown again"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "Key label"
+          },
+          "llm_credential_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Llm Credential Id",
+            "description": "Bound LLM credential profile ID, or null if unbound"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "key",
+          "name"
+        ],
+        "title": "ApiKeyCreateResponse",
+        "description": "Response after creating an API key. The raw key is shown only once."
+      },
+      "ApiKeyListItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id",
+            "description": "API key ID"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "Key label"
+          },
+          "prefix": {
+            "type": "string",
+            "title": "Prefix",
+            "description": "Key prefix for identification (e.g. sk-abc1...)"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "description": "Whether the key is active"
+          },
+          "last_used_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Used At",
+            "description": "Last time the key was used"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At",
+            "description": "Key creation timestamp"
+          },
+          "llm_credential_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Llm Credential Id",
+            "description": "Bound LLM credential profile ID, or null if unbound"
+          },
+          "llm_credential_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Llm Credential Name",
+            "description": "Bound LLM credential profile name, or null if unbound"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "prefix",
+          "is_active",
+          "last_used_at",
+          "created_at"
+        ],
+        "title": "ApiKeyListItem",
+        "description": "API key metadata (no secrets exposed)."
+      },
+      "ApiSuccessResponse_ApiKeyCreateResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/ApiKeyCreateResponse"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[ApiKeyCreateResponse]"
+      },
+      "ApiSuccessResponse_LLMCredentialResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/LLMCredentialResponse"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[LLMCredentialResponse]"
+      },
+      "ApiSuccessResponse_NetShareResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/NetShareResponse"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[NetShareResponse]"
+      },
+      "ApiSuccessResponse_OAuthAuthorizeResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/OAuthAuthorizeResponse"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[OAuthAuthorizeResponse]"
+      },
+      "ApiSuccessResponse_PetriObjectDetail_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/PetriObjectDetail"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[PetriObjectDetail]"
+      },
+      "ApiSuccessResponse_PublicConfigResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/PublicConfigResponse"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[PublicConfigResponse]"
+      },
+      "ApiSuccessResponse_SessionListResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/SessionListResponse"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[SessionListResponse]"
+      },
+      "ApiSuccessResponse_SessionMessagesResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/SessionMessagesResponse"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[SessionMessagesResponse]"
+      },
+      "ApiSuccessResponse_ShareResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/ShareResponse"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[ShareResponse]"
+      },
+      "ApiSuccessResponse_SharedNetView_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/SharedNetView"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[SharedNetView]"
+      },
+      "ApiSuccessResponse_SharedSessionView_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/SharedSessionView"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[SharedSessionView]"
+      },
+      "ApiSuccessResponse_TestLLMCredentialResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/TestLLMCredentialResponse"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[TestLLMCredentialResponse]"
+      },
+      "ApiSuccessResponse_TokenPairResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/TokenPairResponse"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[TokenPairResponse]"
+      },
+      "ApiSuccessResponse_UserNetDetail_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/UserNetDetail"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[UserNetDetail]"
+      },
+      "ApiSuccessResponse_UserNetListResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/UserNetListResponse"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[UserNetListResponse]"
+      },
+      "ApiSuccessResponse_UserResponse_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/UserResponse"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[UserResponse]"
+      },
+      "ApiSuccessResponse_dict_": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Data"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[dict]"
+      },
+      "ApiSuccessResponse_list_ApiKeyListItem__": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ApiKeyListItem"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[list[ApiKeyListItem]]"
+      },
+      "ApiSuccessResponse_list_LLMCredentialResponse__": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/LLMCredentialResponse"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[list[LLMCredentialResponse]]"
+      },
+      "ApiSuccessResponse_list_NetSnapshotListItem__": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/NetSnapshotListItem"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[list[NetSnapshotListItem]]"
+      },
+      "ApiSuccessResponse_list_PetriObjectSummary__": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/PetriObjectSummary"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ResponseMeta"
+          },
+          "error": {
+            "type": "null",
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ApiSuccessResponse[list[PetriObjectSummary]]"
+      },
+      "ArchiveBody": {
+        "properties": {
+          "archive_base64": {
+            "type": "string",
+            "maxLength": 358000000,
+            "title": "Archive Base64"
+          },
+          "revision_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revision Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "archive_base64"
+        ],
+        "title": "ArchiveBody"
+      },
+      "ChatCompletionRequest": {
+        "properties": {
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/ChatMessage-Input"
+            },
+            "type": "array",
+            "title": "Messages"
+          },
+          "stream": {
+            "type": "boolean",
+            "title": "Stream",
+            "default": false
+          },
+          "stream_options": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StreamOptions"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "temperature": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Temperature"
+          },
+          "max_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Tokens"
+          },
+          "top_p": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Top P"
+          },
+          "frequency_penalty": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frequency Penalty"
+          },
+          "presence_penalty": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Presence Penalty"
+          },
+          "stop": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop"
+          },
+          "user": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User"
+          },
+          "tools": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tools"
+          },
+          "tool_choice": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tool Choice"
+          },
+          "metadata": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metadata"
+          }
+        },
+        "type": "object",
+        "required": [
+          "model",
+          "messages"
+        ],
+        "title": "ChatCompletionRequest",
+        "description": "OpenAI-compatible chat completion request."
+      },
+      "ChatCompletionResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "object": {
+            "type": "string",
+            "title": "Object",
+            "default": "chat.completion"
+          },
+          "created": {
+            "type": "integer",
+            "title": "Created"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "choices": {
+            "items": {
+              "$ref": "#/components/schemas/Choice"
+            },
+            "type": "array",
+            "title": "Choices"
+          },
+          "usage": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Usage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "system_fingerprint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "System Fingerprint"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created",
+          "model",
+          "choices"
+        ],
+        "title": "ChatCompletionResponse",
+        "description": "OpenAI-compatible chat completion response."
+      },
+      "ChatMessage-Input": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content"
+          },
+          "tool_calls": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ToolCall"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tool Calls"
+          },
+          "tool_call_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tool Call Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "agent_events": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/AgentEventDelta"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Events"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role"
+        ],
+        "title": "ChatMessage",
+        "description": "A single message in the conversation."
+      },
+      "ChatMessage-Output": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content"
+          },
+          "tool_calls": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ToolCall"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tool Calls"
+          },
+          "tool_call_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tool Call Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "agent_events": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/AgentEventDelta"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Events"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role"
+        ],
+        "title": "ChatMessage",
+        "description": "A single message in the conversation."
+      },
+      "Choice": {
+        "properties": {
+          "index": {
+            "type": "integer",
+            "title": "Index",
+            "default": 0
+          },
+          "message": {
+            "$ref": "#/components/schemas/ChatMessage-Output"
+          },
+          "finish_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finish Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "title": "Choice",
+        "description": "A single completion choice."
+      },
+      "CompareBody": {
+        "properties": {
+          "archive_base64": {
+            "type": "string",
+            "maxLength": 358000000,
+            "title": "Archive Base64"
+          },
+          "revision_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revision Id"
+          },
+          "left": {
+            "type": "string",
+            "title": "Left"
+          },
+          "right": {
+            "type": "string",
+            "title": "Right"
+          },
+          "include_layout": {
+            "type": "boolean",
+            "title": "Include Layout",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "archive_base64",
+          "left",
+          "right"
+        ],
+        "title": "CompareBody"
+      },
+      "ComposedLinkSpec": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "description": "placeFusion | transitionToPlace | placeToTransition"
+          },
+          "source_object": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Source Object"
+          },
+          "source_element": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Source Element"
+          },
+          "target_object": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Target Object"
+          },
+          "target_element": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Target Element"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Quantity",
+            "default": 1
+          },
+          "informational": {
+            "type": "boolean",
+            "title": "Informational",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "source_object",
+          "source_element",
+          "target_object",
+          "target_element"
+        ],
+        "title": "ComposedLinkSpec"
+      },
+      "ComposedObjectSpec": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "priority": {
+            "type": "integer",
+            "title": "Priority",
+            "default": 0
+          },
+          "x": {
+            "type": "number",
+            "title": "X",
+            "default": 0.0
+          },
+          "y": {
+            "type": "number",
+            "title": "Y",
+            "default": 0.0
+          },
+          "width": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Width"
+          },
+          "height": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Height"
+          },
+          "collapsed": {
+            "type": "boolean",
+            "title": "Collapsed",
+            "default": false
+          },
+          "parent": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent"
+          },
+          "auto_fit": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auto Fit"
+          },
+          "free": {
+            "type": "boolean",
+            "title": "Free",
+            "default": false
+          },
+          "net_data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net Data"
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session Id"
+          }
+        },
+        "type": "object",
+        "title": "ComposedObjectSpec",
+        "description": "One object in a composed-model request: either an inline flat net,\nor a reference to an existing session's net."
+      },
+      "ComposedSimulateBody": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "default": "ComposedModel"
+          },
+          "objects": {
+            "items": {
+              "$ref": "#/components/schemas/ComposedObjectSpec"
+            },
+            "type": "array",
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Objects"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/ComposedLinkSpec"
+            },
+            "type": "array",
+            "title": "Links"
+          }
+        },
+        "type": "object",
+        "required": [
+          "objects"
+        ],
+        "title": "ComposedSimulateBody"
+      },
+      "CreateLLMCredentialRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Name",
+            "description": "User-defined label"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "openai",
+              "anthropic",
+              "ollama"
+            ],
+            "title": "Provider",
+            "description": "LLM provider"
+          },
+          "api_key": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 512,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Api Key",
+            "description": "Raw API key (Ollama may omit this)."
+          },
+          "base_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2083,
+                "minLength": 1,
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Url",
+            "description": "Optional override (LM Studio, Azure, self-hosted Ollama, etc.)."
+          },
+          "model": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Model",
+            "description": "Model identifier — e.g. gpt-4o, claude-haiku-4-5-20251001, llama3.2"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "provider",
+          "model"
+        ],
+        "title": "CreateLLMCredentialRequest",
+        "description": "Request body for POST /llm-credentials."
+      },
+      "DetailedHealthStatus": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Service status: healthy, degraded, unhealthy"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp",
+            "description": "Current timestamp"
+          },
+          "uptime_seconds": {
+            "type": "number",
+            "title": "Uptime Seconds",
+            "description": "Application uptime in seconds"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "description": "Application version",
+            "default": "1.0.0"
+          },
+          "environment": {
+            "type": "string",
+            "title": "Environment",
+            "description": "Current environment"
+          },
+          "features": {
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "type": "object",
+            "title": "Features",
+            "description": "Enabled feature flags"
+          },
+          "components": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Components",
+            "description": "Status of individual components"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "timestamp",
+          "uptime_seconds",
+          "environment",
+          "components"
+        ],
+        "title": "DetailedHealthStatus",
+        "description": "Detailed health check with component statuses."
+      },
+      "ExportBody": {
+        "properties": {
+          "net_data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Net Data"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "default": ""
+          },
+          "archive_base64": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 358000000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archive Base64"
+          },
+          "context": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Context"
+          },
+          "conversation": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conversation"
+          },
+          "review": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Review"
+          }
+        },
+        "type": "object",
+        "required": [
+          "net_data"
+        ],
+        "title": "ExportBody"
+      },
+      "FunctionCall": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "arguments": {
+            "type": "string",
+            "title": "Arguments"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "arguments"
+        ],
+        "title": "FunctionCall",
+        "description": "Function call within a tool call."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthStatus": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Service status: healthy, degraded, unhealthy"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp",
+            "description": "Current timestamp"
+          },
+          "uptime_seconds": {
+            "type": "number",
+            "title": "Uptime Seconds",
+            "description": "Application uptime in seconds"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "description": "Application version",
+            "default": "1.0.0"
+          },
+          "environment": {
+            "type": "string",
+            "title": "Environment",
+            "description": "Current environment"
+          },
+          "features": {
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "type": "object",
+            "title": "Features",
+            "description": "Enabled feature flags"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "timestamp",
+          "uptime_seconds",
+          "environment"
+        ],
+        "title": "HealthStatus",
+        "description": "Health check response model."
+      },
+      "ImageBody": {
+        "properties": {
+          "archive_base64": {
+            "type": "string",
+            "maxLength": 358000000,
+            "title": "Archive Base64"
+          },
+          "revision_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revision Id"
+          },
+          "view_id": {
+            "type": "string",
+            "title": "View Id",
+            "default": "main"
+          }
+        },
+        "type": "object",
+        "required": [
+          "archive_base64"
+        ],
+        "title": "ImageBody"
+      },
+      "LLMCredentialResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "openai",
+              "anthropic",
+              "ollama"
+            ],
+            "title": "Provider"
+          },
+          "api_key_preview": {
+            "type": "string",
+            "title": "Api Key Preview",
+            "description": "Masked preview of the stored key (e.g. 'sk-...abc'). Empty for Ollama."
+          },
+          "base_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Url"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "last_validated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Validated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "provider",
+          "api_key_preview",
+          "base_url",
+          "model",
+          "created_at",
+          "last_validated_at"
+        ],
+        "title": "LLMCredentialResponse",
+        "description": "Read-side projection — never exposes the raw key."
+      },
+      "LoginRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+            "description": "Email address"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password",
+            "description": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginRequest",
+        "description": "Request to log in via email + password."
+      },
+      "ModelListResponse": {
+        "properties": {
+          "object": {
+            "type": "string",
+            "title": "Object",
+            "default": "list"
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ModelObject"
+            },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "ModelListResponse",
+        "description": "Response for GET /v1/models."
+      },
+      "ModelObject": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "object": {
+            "type": "string",
+            "title": "Object",
+            "default": "model"
+          },
+          "created": {
+            "type": "integer",
+            "title": "Created"
+          },
+          "owned_by": {
+            "type": "string",
+            "title": "Owned By"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "created",
+          "owned_by"
+        ],
+        "title": "ModelObject",
+        "description": "A single model entry."
+      },
+      "NetShareRequest": {
+        "properties": {
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "private",
+              "link_only"
+            ],
+            "title": "Visibility"
+          }
+        },
+        "type": "object",
+        "required": [
+          "visibility"
+        ],
+        "title": "NetShareRequest"
+      },
+      "NetShareResponse": {
+        "properties": {
+          "share_token": {
+            "type": "string",
+            "title": "Share Token"
+          },
+          "visibility": {
+            "type": "string",
+            "title": "Visibility"
+          }
+        },
+        "type": "object",
+        "required": [
+          "share_token",
+          "visibility"
+        ],
+        "title": "NetShareResponse"
+      },
+      "NetSnapshotListItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Snapshot UUID"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "description": "\"agent\" or \"user\""
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label",
+            "description": "User-assigned label, if any"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At",
+            "description": "ISO-8601 creation timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "source",
+          "label",
+          "created_at"
+        ],
+        "title": "NetSnapshotListItem",
+        "description": "Summary of a single net snapshot (no net_data — use the simulate endpoint)."
+      },
+      "NetThumbnailArc": {
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "title": "Source Id"
+          },
+          "target_id": {
+            "type": "string",
+            "title": "Target Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "source_id",
+          "target_id"
+        ],
+        "title": "NetThumbnailArc",
+        "description": "Minimal arc descriptor for gallery previews."
+      },
+      "NetThumbnailNode": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "place",
+              "transition"
+            ],
+            "title": "Type"
+          },
+          "x": {
+            "type": "number",
+            "title": "X"
+          },
+          "y": {
+            "type": "number",
+            "title": "Y"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "x",
+          "y"
+        ],
+        "title": "NetThumbnailNode",
+        "description": "Minimal node descriptor for gallery previews — position only, no names."
+      },
+      "NetworkImageRequest": {
+        "properties": {
+          "net_data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Net Data"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "default": "Petri network"
+          },
+          "options": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Options"
+          }
+        },
+        "type": "object",
+        "required": [
+          "net_data"
+        ],
+        "title": "NetworkImageRequest"
+      },
+      "OAuthAuthorizeResponse": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url",
+            "description": "OAuth authorization URL to redirect user to"
+          }
+        },
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "OAuthAuthorizeResponse",
+        "description": "OAuth authorization URL response."
+      },
+      "PaginationMeta": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "description": "Total number of items"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page",
+            "description": "Current page number"
+          },
+          "per_page": {
+            "type": "integer",
+            "title": "Per Page",
+            "description": "Items per page"
+          },
+          "total_pages": {
+            "type": "integer",
+            "title": "Total Pages",
+            "description": "Total number of pages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "page",
+          "per_page",
+          "total_pages"
+        ],
+        "title": "PaginationMeta",
+        "description": "Pagination metadata"
+      },
+      "PetriObjectCreateRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "template_data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Template Data"
+          },
+          "preview_svg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preview Svg"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "template_data"
+        ],
+        "title": "PetriObjectCreateRequest"
+      },
+      "PetriObjectDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "is_builtin": {
+            "type": "boolean",
+            "title": "Is Builtin"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At"
+          },
+          "template_data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Template Data"
+          },
+          "preview_svg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preview Svg"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "is_builtin",
+          "updated_at",
+          "template_data",
+          "created_at"
+        ],
+        "title": "PetriObjectDetail",
+        "description": "Full template payload (served when a user drops the object on the canvas)."
+      },
+      "PetriObjectSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "is_builtin": {
+            "type": "boolean",
+            "title": "Is Builtin"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "is_builtin",
+          "updated_at"
+        ],
+        "title": "PetriObjectSummary",
+        "description": "Minimal descriptor used in the list endpoint."
+      },
+      "PetriObjectUpdateRequest": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "template_data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Data"
+          },
+          "preview_svg": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preview Svg"
+          }
+        },
+        "type": "object",
+        "title": "PetriObjectUpdateRequest"
+      },
+      "PnmlParseBody": {
+        "properties": {
+          "xml": {
+            "type": "string",
+            "title": "Xml",
+            "description": "Full PNML XML document text."
+          }
+        },
+        "type": "object",
+        "required": [
+          "xml"
+        ],
+        "title": "PnmlParseBody",
+        "description": "Request body for POST /pnml/parse."
+      },
+      "PublicConfigResponse": {
+        "properties": {
+          "auth_mode": {
+            "type": "string",
+            "title": "Auth Mode",
+            "description": "\"multi\" (accounts required) or \"single_user\" (no login, one local account)"
+          },
+          "oauth_providers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Oauth Providers",
+            "description": "External sign-in providers this deployment has credentials for. Empty when none are configured, and the login screen then offers none."
+          },
+          "mcp_enabled": {
+            "type": "boolean",
+            "title": "Mcp Enabled",
+            "description": "Whether this deployment serves the MCP endpoint at all"
+          },
+          "mcp_path": {
+            "type": "string",
+            "title": "Mcp Path",
+            "description": "Path the MCP endpoint is mounted at, e.g. /mcp"
+          },
+          "http_api_enabled": {
+            "type": "boolean",
+            "title": "Http Api Enabled",
+            "description": "Whether this deployment serves the OpenAI-compatible HTTP API"
+          },
+          "http_api_path": {
+            "type": "string",
+            "title": "Http Api Path",
+            "description": "Base path of the OpenAI-compatible HTTP API, e.g. /api/v1"
+          },
+          "openapi_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Openapi Url",
+            "description": "Path to the OpenAPI schema, or null where docs are switched off"
+          },
+          "docs_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Docs Url",
+            "description": "Path to the interactive API docs, or null where docs are switched off"
+          }
+        },
+        "type": "object",
+        "required": [
+          "auth_mode",
+          "oauth_providers",
+          "mcp_enabled",
+          "mcp_path",
+          "http_api_enabled",
+          "http_api_path",
+          "openapi_url",
+          "docs_url"
+        ],
+        "title": "PublicConfigResponse",
+        "description": "Public, secret-free runtime configuration."
+      },
+      "RefreshTokenRequest": {
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token",
+            "description": "JWT refresh token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "refresh_token"
+        ],
+        "title": "RefreshTokenRequest",
+        "description": "Request to refresh an access token."
+      },
+      "ResponseMeta": {
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp",
+            "description": "Response timestamp"
+          },
+          "request_id": {
+            "type": "string",
+            "title": "Request Id",
+            "description": "Unique request identifier"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "description": "API version",
+            "default": "v1"
+          },
+          "pagination": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMeta"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Pagination metadata if applicable"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id"
+        ],
+        "title": "ResponseMeta",
+        "description": "Response metadata"
+      },
+      "RunBody": {
+        "properties": {
+          "archive_base64": {
+            "type": "string",
+            "maxLength": 358000000,
+            "title": "Archive Base64"
+          },
+          "revision_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revision Id"
+          },
+          "horizon": {
+            "type": "number",
+            "maximum": 1000000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Horizon",
+            "default": 100
+          },
+          "sampling_interval": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Sampling Interval",
+            "default": 1
+          }
+        },
+        "type": "object",
+        "required": [
+          "archive_base64"
+        ],
+        "title": "RunBody"
+      },
+      "SessionListItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Session ID (SHA-256 fingerprint)"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title",
+            "description": "Session title"
+          },
+          "share_token": {
+            "type": "string",
+            "title": "Share Token",
+            "description": "Stable UUID used in share URLs"
+          },
+          "visibility": {
+            "type": "string",
+            "title": "Visibility",
+            "description": "private | link_only | public"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At",
+            "description": "Creation timestamp"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At",
+            "description": "Last update timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "share_token",
+          "visibility",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "SessionListItem",
+        "description": "Session summary for list endpoint."
+      },
+      "SessionListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SessionListItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "has_more": {
+            "type": "boolean",
+            "title": "Has More"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "has_more"
+        ],
+        "title": "SessionListResponse",
+        "description": "Paginated session list."
+      },
+      "SessionMessagesResponse": {
+        "properties": {
+          "messages": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Messages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "messages"
+        ],
+        "title": "SessionMessagesResponse",
+        "description": "Stored chat message history for a session."
+      },
+      "SessionUpdateRequest": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 255,
+            "title": "Title",
+            "description": "New session title"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "title": "SessionUpdateRequest",
+        "description": "Request to update session metadata."
+      },
+      "ShareRequest": {
+        "properties": {
+          "visibility": {
+            "type": "string",
+            "title": "Visibility",
+            "description": "private | link_only | public"
+          }
+        },
+        "type": "object",
+        "required": [
+          "visibility"
+        ],
+        "title": "ShareRequest",
+        "description": "Request body for the share endpoint."
+      },
+      "ShareResponse": {
+        "properties": {
+          "share_token": {
+            "type": "string",
+            "title": "Share Token",
+            "description": "Stable UUID token for the share URL"
+          },
+          "visibility": {
+            "type": "string",
+            "title": "Visibility",
+            "description": "Current visibility setting"
+          }
+        },
+        "type": "object",
+        "required": [
+          "share_token",
+          "visibility"
+        ],
+        "title": "ShareResponse",
+        "description": "Response from the share endpoint."
+      },
+      "SharedNetView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "share_token": {
+            "type": "string",
+            "title": "Share Token"
+          },
+          "visibility": {
+            "type": "string",
+            "title": "Visibility"
+          },
+          "net_data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Net Data"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At"
+          },
+          "thumbnail": {
+            "items": {
+              "$ref": "#/components/schemas/NetThumbnailNode"
+            },
+            "type": "array",
+            "title": "Thumbnail"
+          },
+          "thumbnail_arcs": {
+            "items": {
+              "$ref": "#/components/schemas/NetThumbnailArc"
+            },
+            "type": "array",
+            "title": "Thumbnail Arcs"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "share_token",
+          "visibility",
+          "net_data",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "SharedNetView",
+        "description": "Public read-only view of a net via its share token."
+      },
+      "SharedSessionView": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "share_token": {
+            "type": "string",
+            "title": "Share Token"
+          },
+          "visibility": {
+            "type": "string",
+            "title": "Visibility"
+          },
+          "net_data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Net Data"
+          },
+          "messages": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Messages"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "share_token",
+          "visibility",
+          "net_data",
+          "messages",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "SharedSessionView",
+        "description": "Public read-only view of a shared session."
+      },
+      "SignupRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email",
+            "description": "Email address"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "Password",
+            "description": "Password"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "Display name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "SignupRequest",
+        "description": "Request to register a new account via email + password."
+      },
+      "SimulateBody": {
+        "properties": {
+          "snapshot_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snapshot Id",
+            "description": "UUID of a stored net snapshot. Takes precedence over net_data."
+          },
+          "net_data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net Data",
+            "description": "Full Petri net JSON. Legacy fallback when snapshot_id is absent."
+          }
+        },
+        "type": "object",
+        "title": "SimulateBody",
+        "description": "Optional body for the simulate endpoint.\n\nResolution order:\n1. ``snapshot_id``  — fetch the specific versioned snapshot from DB (preferred).\n2. ``net_data``     — legacy fallback: full net JSON from the frontend\n                      (used by old messages in localStorage that pre-date snapshots).\n3. Neither          — use the session's current ``net_data`` from the sessions table."
+      },
+      "StandaloneSimulateBody": {
+        "properties": {
+          "net_data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Net Data",
+            "description": "Full Petri net JSON to simulate."
+          }
+        },
+        "type": "object",
+        "required": [
+          "net_data"
+        ],
+        "title": "StandaloneSimulateBody",
+        "description": "Request body for standalone simulation."
+      },
+      "StreamOptions": {
+        "properties": {
+          "include_usage": {
+            "type": "boolean",
+            "title": "Include Usage",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "StreamOptions",
+        "description": "Options for streaming responses."
+      },
+      "SyncMessagesRequest": {
+        "properties": {
+          "messages": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Messages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "messages"
+        ],
+        "title": "SyncMessagesRequest",
+        "description": "Payload for syncing chat message history to the backend."
+      },
+      "TestLLMCredentialResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "latency_ms": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latency Ms"
+          },
+          "model_response_preview": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Response Preview"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "TestLLMCredentialResponse",
+        "description": "Response from POST /llm-credentials/{id}/test."
+      },
+      "TokenPairResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token",
+            "description": "JWT access token"
+          },
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token",
+            "description": "JWT refresh token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "expires_in": {
+            "type": "integer",
+            "title": "Expires In",
+            "description": "Access token lifetime in seconds"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "refresh_token",
+          "expires_in"
+        ],
+        "title": "TokenPairResponse",
+        "description": "Token pair response."
+      },
+      "ToolCall": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "default": "function"
+          },
+          "function": {
+            "$ref": "#/components/schemas/FunctionCall"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "function"
+        ],
+        "title": "ToolCall",
+        "description": "Tool call made by the assistant."
+      },
+      "TrainingExportRequest": {
+        "properties": {
+          "context": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Context"
+          },
+          "conversation": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conversation"
+          },
+          "tool_calls": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tool Calls"
+          }
+        },
+        "type": "object",
+        "title": "TrainingExportRequest"
+      },
+      "UpdateLLMCredentialRequest": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "api_key": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 512,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Api Key"
+          },
+          "base_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2083,
+                "minLength": 1,
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Url"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 128,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          }
+        },
+        "type": "object",
+        "title": "UpdateLLMCredentialRequest",
+        "description": "Request body for PATCH /llm-credentials/{id}. All fields optional."
+      },
+      "UpdateProfileRequest": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "Full name"
+          },
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name",
+            "description": "Preferred name for the assistant"
+          },
+          "work_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Type",
+            "description": "Occupation category"
+          },
+          "custom_instructions": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 4000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custom Instructions",
+            "description": "Custom instructions for the assistant"
+          },
+          "mcp_enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mcp Enabled",
+            "description": "Allow API keys to reach the MCP server"
+          },
+          "http_api_enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Http Api Enabled",
+            "description": "Allow API keys to reach the OpenAI-compatible HTTP API"
+          },
+          "contributor": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contributor"
+          }
+        },
+        "type": "object",
+        "title": "UpdateProfileRequest",
+        "description": "Request to update the authenticated user's profile."
+      },
+      "Usage": {
+        "properties": {
+          "prompt_tokens": {
+            "type": "integer",
+            "title": "Prompt Tokens"
+          },
+          "completion_tokens": {
+            "type": "integer",
+            "title": "Completion Tokens"
+          },
+          "total_tokens": {
+            "type": "integer",
+            "title": "Total Tokens"
+          }
+        },
+        "type": "object",
+        "required": [
+          "prompt_tokens",
+          "completion_tokens",
+          "total_tokens"
+        ],
+        "title": "Usage",
+        "description": "Token usage statistics."
+      },
+      "UserNetCreateRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "net_data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Net Data"
+          },
+          "origin_snapshot_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin Snapshot Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "net_data"
+        ],
+        "title": "UserNetCreateRequest"
+      },
+      "UserNetDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At"
+          },
+          "thumbnail": {
+            "items": {
+              "$ref": "#/components/schemas/NetThumbnailNode"
+            },
+            "type": "array",
+            "title": "Thumbnail"
+          },
+          "thumbnail_arcs": {
+            "items": {
+              "$ref": "#/components/schemas/NetThumbnailArc"
+            },
+            "type": "array",
+            "title": "Thumbnail Arcs"
+          },
+          "share_token": {
+            "type": "string",
+            "title": "Share Token",
+            "default": ""
+          },
+          "visibility": {
+            "type": "string",
+            "title": "Visibility",
+            "default": "private"
+          },
+          "net_data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Net Data"
+          },
+          "origin_snapshot_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Origin Snapshot Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "created_at",
+          "updated_at",
+          "net_data"
+        ],
+        "title": "UserNetDetail",
+        "description": "Full net payload including serialized net_data."
+      },
+      "UserNetListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/UserNetSummary"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "has_more": {
+            "type": "boolean",
+            "title": "Has More"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "has_more"
+        ],
+        "title": "UserNetListResponse",
+        "description": "Paginated list of net summaries."
+      },
+      "UserNetSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "created_at": {
+            "type": "string",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "title": "Updated At"
+          },
+          "thumbnail": {
+            "items": {
+              "$ref": "#/components/schemas/NetThumbnailNode"
+            },
+            "type": "array",
+            "title": "Thumbnail"
+          },
+          "thumbnail_arcs": {
+            "items": {
+              "$ref": "#/components/schemas/NetThumbnailArc"
+            },
+            "type": "array",
+            "title": "Thumbnail Arcs"
+          },
+          "share_token": {
+            "type": "string",
+            "title": "Share Token",
+            "default": ""
+          },
+          "visibility": {
+            "type": "string",
+            "title": "Visibility",
+            "default": "private"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "UserNetSummary",
+        "description": "Minimal net descriptor used in the list endpoint."
+      },
+      "UserNetUpdateRequest": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "net_data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net Data"
+          }
+        },
+        "type": "object",
+        "title": "UserNetUpdateRequest"
+      },
+      "UserResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id",
+            "description": "User UUID"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email",
+            "description": "User email"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "User full name"
+          },
+          "picture": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Picture",
+            "description": "User avatar URL"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "description": "Whether user is active"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At",
+            "description": "Account creation timestamp"
+          },
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name",
+            "description": "Preferred name the assistant uses"
+          },
+          "work_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Work Type",
+            "description": "User's occupation category"
+          },
+          "custom_instructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custom Instructions",
+            "description": "Custom instructions for the assistant"
+          },
+          "mcp_enabled": {
+            "type": "boolean",
+            "title": "Mcp Enabled",
+            "description": "Whether API keys may reach the MCP server",
+            "default": true
+          },
+          "http_api_enabled": {
+            "type": "boolean",
+            "title": "Http Api Enabled",
+            "description": "Whether API keys may reach the OpenAI-compatible HTTP API",
+            "default": true
+          },
+          "contributor": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Contributor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "name",
+          "is_active",
+          "created_at"
+        ],
+        "title": "UserResponse",
+        "description": "User info response."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "petri-net-simulation-portal",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --host 127.0.0.1",
+    "build": "astro build",
+    "preview": "astro preview --host 127.0.0.1",
+    "sync": "node scripts/sync.mjs",
+    "translate": "node scripts/translate.mjs",
+    "verify": "node scripts/verify.mjs",
+    "test": "node --test scripts/*.test.mjs"
+  },
+  "dependencies": {
+    "astro": "7.4.4",
+    "@astrojs/starlight": "0.42.8",
+    "@astrojs/markdown-remark": "^7.3.0"
+  }
+}

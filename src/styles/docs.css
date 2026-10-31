@@ -1,0 +1,4 @@
+:root { --sl-color-accent-low: #103e37; --sl-color-accent: #159883; --sl-color-accent-high: #a8e6d7; --sl-font: 'Segoe UI', system-ui, sans-serif; }
+:root[data-theme='light'] { --sl-color-accent-low: #ddf4ec; --sl-color-accent: #087e6b; --sl-color-accent-high: #075346; }
+.site-title { gap: .5rem; font-size: 1rem; }
+.source-note { border-left: 3px solid #159883; padding: .8rem 1rem; background: var(--sl-color-gray-6); font-size: .85rem; margin-block: 1.5rem; }

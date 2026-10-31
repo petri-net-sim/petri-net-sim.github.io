@@ -1,0 +1,91 @@
+name: Build and publish portal
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 */6 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: portal-${{ github.event_name == 'pull_request' && github.ref || 'production' }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '23'
+          cache: maven
+          cache-dependency-path: sources.json
+      - run: npm ci
+      - name: Import guides and release assets
+        run: npm run sync
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GIT_LFS_SKIP_SMUDGE: '0'
+      - name: Restore translation cache
+        id: translations
+        uses: actions/cache/restore@v4
+        with:
+          path: .cache/translations
+          key: translations-v2-${{ github.run_id }}
+          restore-keys: translations-v2-
+      - name: Translate changed guides
+        if: github.event_name != 'pull_request'
+        run: npm run translate
+        env:
+          TRANSLATION_API_KEY: ${{ secrets.TRANSLATION_API_KEY }}
+          TRANSLATION_API_URL: ${{ vars.TRANSLATION_API_URL }}
+          TRANSLATION_MODEL: ${{ vars.TRANSLATION_MODEL }}
+      - name: Render cached translations for pull requests
+        if: github.event_name == 'pull_request'
+        run: npm run translate -- --cache-only
+      - name: Save translation cache
+        if: github.event_name != 'pull_request'
+        uses: actions/cache/save@v4
+        with:
+          path: .cache/translations
+          key: translations-v2-${{ github.run_id }}
+      - name: Generate OpenAPI and Java references
+        run: python scripts/references.py
+      - run: npm test
+      - run: npm run build
+      - run: npm run verify
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
+        with:
+          path: dist
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment

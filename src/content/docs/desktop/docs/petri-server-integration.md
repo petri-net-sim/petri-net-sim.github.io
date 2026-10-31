@@ -1,0 +1,719 @@
+---
+title: "petri-server - Integration Guide"
+editUrl: "https://github.com/StetsenkoInna/PetriObjModelPaint/edit/HEAD/docs/petri-server-integration.md"
+---
+
+> Source: [StetsenkoInna/PetriObjModelPaint](https://github.com/StetsenkoInna/PetriObjModelPaint/blob/9dab83739aaf6df8c0268a962dc65fabeaa98dbd/docs/petri-server-integration.md). Release v2.8.0: `9dab837`. [License](https://github.com/StetsenkoInna/PetriObjModelPaint/blob/9dab83739aaf6df8c0268a962dc65fabeaa98dbd/LICENSE).
+
+
+`petri-server` is a self-contained Spring Boot service that exposes Petri net simulation
+over HTTP.  It accepts a PNML document, runs the discrete-event simulator, and delivers
+results through one of two transports:
+
+| Transport | Best for |
+|-----------|----------|
+| **SSE streaming** (`POST /stream`) | Web frontends, async pipelines, microservice calls |
+| **WebSocket / STOMP** (`/ws`) | Real-time dashboards, interactive UIs |
+
+Both transports share the same pause / resume / stop REST control endpoints.
+
+There are two API versions. **v1** runs a single Petri net. **v2** runs a
+[Petri-object model](/desktop/docs/petri-object-models/) - several Petri-objects linked by shared places
+and by arcs that cross object boundaries - and reports statistics per object. A plain
+single-net document is valid v2 input too, so v2 is a superset of v1.
+
+## Full API Reference
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/v1/net/parse` | Parse PNML → structured JSON |
+| `POST` | `/api/v1/simulation/start` | Start simulation (WebSocket flow) |
+| `POST` | `/api/v1/simulation/stream` | Start simulation (SSE flow) |
+| `POST` | `/api/v1/simulation/{id}/pause` | Pause |
+| `POST` | `/api/v1/simulation/{id}/resume` | Resume |
+| `POST` | `/api/v1/simulation/{id}/stop` | Stop |
+| `GET`  | `/api/v1/simulation/{id}/status` | Session status |
+| `GET`  | `/api/v1/simulation/{id}/result` | Aggregated statistics after run |
+| `POST` | `/api/v2/model/parse` | Parse a Petri-object model → structured JSON |
+| `POST` | `/api/v2/simulation/start` | Start a model simulation (WebSocket flow) |
+| `POST` | `/api/v2/simulation/stream` | Start a model simulation (SSE flow) |
+| `POST` | `/api/v2/simulation/{id}/pause` | Pause |
+| `POST` | `/api/v2/simulation/{id}/resume` | Resume |
+| `POST` | `/api/v2/simulation/{id}/stop` | Stop |
+| `GET`  | `/api/v2/simulation/{id}/status` | Session status |
+| `GET`  | `/api/v2/simulation/{id}/result` | Statistics per Petri-object after run |
+| `GET`  | `/actuator/health` | Health check |
+| `GET`  | `/docs` | Swagger UI |
+
+---
+
+## Base URL
+
+```
+http://localhost:8080
+```
+
+Change the port in `petri-server/src/main/resources/application.yml` (`server.port`).
+
+---
+
+## PNML document requirements
+
+Every simulation call requires a PNML string (`netXml`).  The parser expects the
+standard ISO/IEC 15909 envelope:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<pnml>
+  <net id="net1" type="http://www.pnml.org/version-2009/grammar/ptnet">
+    <place id="p1">
+      <name><text>Queue</text></name>
+      <initialMarking><text>3</text></initialMarking>
+      <toolspecific tool="PetriObjModel">
+        <graphics><position x="100" y="200"/></graphics>
+      </toolspecific>
+    </place>
+    <transition id="t1">
+      <name><text>Service</text></name>
+      <toolspecific tool="PetriObjModel">
+        <timeParams distribution="exp" mean="2.0" deviation="0"/>
+        <priority>0</priority>
+        <probability>1.0</probability>
+      </toolspecific>
+    </transition>
+    <arc id="a1" source="p1" target="t1">
+      <inscription><text>1</text></inscription>
+    </arc>
+    <arc id="a2" source="t1" target="p1out">
+      <inscription><text>1</text></inscription>
+    </arc>
+  </net>
+</pnml>
+```
+
+The `id` attributes on `<place>` and `<transition>` become the keys in `markings` and
+`buffers` maps returned by the simulation.
+
+---
+
+## PNML Parse Endpoint
+
+Validates and parses a PNML document into a structured JSON representation without running a simulation.
+Useful for previewing net topology or populating a UI before launching a simulation.
+
+### Request
+
+```
+POST /api/v1/net/parse
+Content-Type: application/json
+```
+
+**Body**
+
+```json
+{ "netXml": "<pnml>...</pnml>" }
+```
+
+### Response `200 OK`
+
+```json
+{
+  "places": [
+    { "id": "p1", "name": "Queue", "initial_marking": 3, "x": 100.0, "y": 200.0 }
+  ],
+  "transitions": [
+    {
+      "id": "t1", "name": "Service",
+      "mean": 2.0, "deviation": 0.0, "distribution": "exp",
+      "priority": 0, "probability": 1.0,
+      "x": 300.0, "y": 200.0
+    }
+  ],
+  "arcs": [
+    { "id": "a1", "source": "p1", "target": "t1", "weight": 1, "type": "normal" },
+    { "id": "a2", "source": "t1", "target": "p1out", "weight": 1, "type": "normal" }
+  ]
+}
+```
+
+| Field | Notes |
+|-------|-------|
+| `x`, `y` | `null` when absent from the PNML `<toolspecific>` block |
+| `arc.type` | `"normal"` for regular arcs; `"inhibitor"` for informational/inhibitor arcs |
+| `arc.source/target` | Place→Transition for input arcs; Transition→Place for output arcs |
+
+Returns `400 Bad Request` with `{"error": "..."}` on invalid PNML.
+
+---
+
+## SSE Streaming Endpoint
+
+### Request
+
+```
+POST /api/v1/simulation/stream
+Content-Type: application/json
+Accept: text/event-stream
+```
+
+**Body**
+
+```json
+{ "netXml": "<pnml>...</pnml>" }
+```
+
+**Query parameters**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `simulationTime` | `double` | `3600.0` | Total simulation time units |
+| `timeStep` | `double` | `1.0` | **Time-based mode**: emit a snapshot every this many simulation units. Total snapshots ≈ `simulationTime / timeStep`. |
+| `snapshotInterval` | `int` | - | **Step-based mode**: emit a snapshot every N transition firings. When set, overrides `timeStep`. |
+| `animationDelayMs` | `long` | `0` | Real-time pause (ms) after each snapshot. Use `timeStep * 1000 / simSpeed` for proportional animation. `0` = stream at full speed (batch mode). |
+
+Exactly one snapshot mode is active per request:
+
+```
+snapshotInterval set  →  step-based
+snapshotInterval absent →  time-based (timeStep used)
+```
+
+---
+
+### Event lifecycle
+
+```
+event: session       ← always first; carries sessionId for control calls
+data: {"sessionId":"550e8400-..."}
+
+data: {"current_time":1.0,"step_number":42,...}   ← snapshot
+data: {"current_time":2.0,"step_number":88,...}   ← snapshot
+...
+data: [DONE]                                       ← end of stream
+```
+
+### Snapshot event shape
+
+```json
+{
+  "current_time":  1.0,
+  "step_number":   42,
+  "markings":  { "p1": 3, "p2": 0 },
+  "buffers":   { "t1": 1, "t2": 0 },
+  "progress":  0.001,
+  "fired_transitions": ["t1"],
+  "firing_sequence": [
+    { "transition_id": "t1", "phase": "before_act_in",
+      "markings": { "p1": 4, "p2": 0 }, "buffers": { "t1": 0, "t2": 0 }, "time": 1.0 },
+    { "transition_id": "t1", "phase": "after_act_in",
+      "markings": { "p1": 3, "p2": 0 }, "buffers": { "t1": 1, "t2": 0 }, "time": 1.0 }
+  ]
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `current_time` | `double` | Simulation clock value at this snapshot |
+| `step_number` | `int` | Total transition firings so far |
+| `markings` | `Map<id, int>` | Token count per place (keyed by PNML `id`) |
+| `buffers` | `Map<id, int>` | Active channel count per transition |
+| `progress` | `double` | `current_time / simulationTime` ∈ [0, 1] |
+| `fired_transitions` | `string[]` | Ids of the transitions that fired since the previous snapshot, in the order they first fired |
+| `firing_sequence` | `FiringStep[]` | The atomic animation steps of those firings, in order |
+
+Both firing fields are always present and never `null`; an empty array means nothing fired in
+the interval. A client that ignores them sees exactly the frame it always saw.
+
+#### Firing step
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `transition_id` | `string` | Id of the transition being fired |
+| `phase` | `string` | `before_act_in`, `after_act_in`, `before_act_out` or `after_act_out` |
+| `markings` | `Map<id, int>` | Model-wide token count per place **at that instant** |
+| `buffers` | `Map<id, int>` | Model-wide active channel count per transition at that instant |
+| `time` | `double` | Simulation clock value at that instant |
+
+What each phase means, and what a player is expected to highlight:
+
+| Phase | Highlight | Markings |
+|-------|-----------|----------|
+| `before_act_in` | input places and input arcs | before the tokens are consumed |
+| `after_act_in` | the transition | tokens consumed, buffer incremented |
+| `before_act_out` | the transition and its output arcs | unchanged from `after_act_in` |
+| `after_act_out` | output places | buffer decremented, tokens produced |
+
+`markings` and `buffers` inside a step span the whole model, keyed the same way as the frame's
+own maps - replaying a frame's steps in order therefore ends on the frame's own state, which is
+why a player that animates the steps can ignore the frame-level maps entirely.
+
+Two things behave differently here than in the reference Python engine, on purpose:
+
+* `step_number` counts flushed time steps - one per event-loop iteration, including the one at
+  `t = 0` before any event - where the Python engine counts completed event iterations. The
+  numbers do not line up; neither is wrong, and no consumer of `step_number` was moved.
+* A model runs `output()` for only the single conflict-winning object per iteration, whereas the
+  Python engine sweeps every due transition in one event. What Python reports as one event may
+  therefore arrive split across two frames. The contract only promises *ordered atomic steps
+  since the previous frame*, which holds either way.
+
+---
+
+### JavaScript (EventSource)
+
+```js
+async function runSimulation(netXml, opts = {}) {
+  const {
+    simulationTime = 3600,
+    timeStep = 1.0,
+    animationDelayMs = 0,
+  } = opts;
+
+  const params = new URLSearchParams({ simulationTime, timeStep, animationDelayMs });
+  const res = await fetch(`http://localhost:8080/api/v1/simulation/stream?${params}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
+    body: JSON.stringify({ netXml }),
+  });
+
+  let sessionId = null;
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buf = '';
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+
+    const lines = buf.split('\n');
+    buf = lines.pop(); // keep incomplete line
+
+    for (const line of lines) {
+      if (line.startsWith('data: [DONE]')) return;
+      if (line.startsWith('data: ')) {
+        const payload = JSON.parse(line.slice(6));
+        if (payload.sessionId) { sessionId = payload.sessionId; continue; }
+        onFrame(payload);           // { current_time, step_number, markings, buffers, progress,
+                                    //   fired_transitions, firing_sequence }
+      }
+    }
+  }
+}
+
+function onFrame(frame) {
+  console.log(`t=${frame.current_time}  progress=${(frame.progress * 100).toFixed(1)}%`);
+  // Animate the firings, or jump straight to the end state when there is nothing to play:
+  // replaying every step lands on frame.markings / frame.buffers either way.
+  for (const step of frame.firing_sequence) {
+    highlight(step.transition_id, step.phase);
+    render(step.markings, step.buffers);
+  }
+  if (frame.firing_sequence.length === 0) render(frame.markings, frame.buffers);
+}
+```
+
+---
+
+### Python (httpx)
+
+```python
+import json
+import httpx
+
+def run_simulation(net_xml: str, simulation_time: float = 3600.0, time_step: float = 1.0):
+    params = {"simulationTime": simulation_time, "timeStep": time_step}
+    with httpx.stream(
+        "POST",
+        "http://localhost:8080/api/v1/simulation/stream",
+        params=params,
+        json={"netXml": net_xml},
+        headers={"Accept": "text/event-stream"},
+        timeout=None,
+    ) as r:
+        buf = ""
+        for chunk in r.iter_text():
+            buf += chunk
+            while "\n\n" in buf:
+                event_block, buf = buf.split("\n\n", 1)
+                for line in event_block.splitlines():
+                    if line.startswith("data: [DONE]"):
+                        return
+                    if line.startswith("data: "):
+                        frame = json.loads(line[6:])
+                        if "sessionId" in frame:
+                            continue
+                        # {"current_time", "step_number", "markings", "buffers", "progress",
+                        #  "fired_transitions", "firing_sequence"}
+                        yield frame
+
+# Usage
+for frame in run_simulation(pnml_string, simulation_time=500, time_step=5):
+    print(f"t={frame['current_time']:.1f}  queue={frame['markings'].get('p1', 0)}")
+    for step in frame["firing_sequence"]:
+        print(f"  {step['phase']:<15} {step['transition_id']}  t={step['time']:.1f}")
+```
+
+---
+
+### curl
+
+```bash
+# Stream, one snapshot per 10 sim-units, full speed
+curl -N -X POST "http://localhost:8080/api/v1/simulation/stream?simulationTime=100&timeStep=10" \
+  -H "Content-Type: application/json" \
+  -H "Accept: text/event-stream" \
+  -d '{"netXml":"<pnml>...</pnml>"}'
+```
+
+---
+
+## Session Control (pause / resume / stop)
+
+After receiving `sessionId` from the first SSE event, use the REST control endpoints.
+They work identically for both SSE and WebSocket sessions.
+
+| Method | Path | Effect |
+|--------|------|--------|
+| `POST` | `/api/v1/simulation/{id}/pause` | Suspends the simulation thread |
+| `POST` | `/api/v1/simulation/{id}/resume` | Resumes a paused simulation |
+| `POST` | `/api/v1/simulation/{id}/stop` | Terminates; stream ends with `[DONE]` |
+| `GET`  | `/api/v1/simulation/{id}/status` | Returns `{"status": "RUNNING"}` |
+
+**Status values**: `PENDING` · `RUNNING` · `PAUSED` · `FINISHED` · `HALTED`
+
+```bash
+# Pause
+curl -X POST http://localhost:8080/api/v1/simulation/550e8400-.../pause
+
+# Resume
+curl -X POST http://localhost:8080/api/v1/simulation/550e8400-.../resume
+
+# Stop
+curl -X POST http://localhost:8080/api/v1/simulation/550e8400-.../stop
+```
+
+---
+
+## Simulation Result Endpoint
+
+Returns aggregated statistics collected over the full simulation run.
+Only available after the simulation has finished.
+
+```
+GET /api/v1/simulation/{id}/result
+```
+
+| HTTP Status | Meaning |
+|-------------|---------|
+| `200 OK` | Run complete - body contains statistics |
+| `202 Accepted` | Session exists but simulation still running |
+| `404 Not Found` | Session not found |
+
+### Response `200 OK`
+
+```json
+{
+  "simulation_time": 3600.0,
+  "final_time": 3600.0,
+  "total_steps": 14823,
+  "places": [
+    {
+      "id": "p1",
+      "name": "Queue",
+      "final_marking": 2,
+      "mean_marking": 1.42,
+      "observed_min": 0,
+      "observed_max": 7
+    }
+  ],
+  "transitions": [
+    {
+      "id": "t1",
+      "name": "Service",
+      "final_buffer": 0,
+      "mean_buffer": 0.88,
+      "observed_min": 0.0,
+      "observed_max": 3.0
+    }
+  ]
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `simulation_time` | `double` | Requested simulation time |
+| `final_time` | `double` | Actual clock value when simulation ended |
+| `total_steps` | `int` | Total transition firings |
+| `places[].mean_marking` | `double` | Time-averaged token count over the run |
+| `transitions[].mean_buffer` | `double` | Time-averaged channel occupancy |
+
+---
+
+## WebSocket / STOMP Endpoint
+
+Endpoint: `ws://localhost:8080/ws` (SockJS fallback available)
+
+### 1. Start a session via REST
+
+```bash
+curl -X POST http://localhost:8080/api/v1/simulation/start \
+  -H "Content-Type: application/json" \
+  -d '{"netXml":"<pnml>...</pnml>", "simulationTime": 3600}'
+# → {"sessionId": "550e8400-..."}
+```
+
+### 2. Subscribe to topics
+
+```
+/topic/v1/sim/{sessionId}/steps    ← simulation step events
+/topic/v1/sim/{sessionId}/status   ← status change events
+```
+
+### Step event shape (STOMP)
+
+```json
+{
+  "sessionId": "550e8400-...",
+  "currentTime": 42.5,
+  "statistics": [
+    { "petriObjId": 1, "elementName": "Queue", "min": 0, "max": 5, "avg": 1.23 }
+  ]
+}
+```
+
+> Note: The STOMP step shape carries rolling statistics (`min/max/avg`), whereas the SSE
+> shape carries live markings and buffers.  Choose the transport that matches your use case.
+
+### 3. Control via STOMP
+
+Send to `/app/v1/sim/{sessionId}/control` with message body:
+
+```
+PAUSE
+RESUME
+STOP
+```
+
+### JavaScript (STOMP.js)
+
+```js
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+
+const client = new Client({
+  webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+  onConnect: () => {
+    client.subscribe(`/topic/v1/sim/${sessionId}/steps`, msg => {
+      const event = JSON.parse(msg.body);
+      console.log(event.currentTime, event.statistics);
+    });
+    client.subscribe(`/topic/v1/sim/${sessionId}/status`, msg => {
+      console.log('status:', JSON.parse(msg.body).status);
+    });
+  },
+});
+client.activate();
+
+// Control
+client.publish({ destination: `/app/v1/sim/${sessionId}/control`, body: 'PAUSE' });
+```
+
+---
+
+## Choosing a Transport
+
+| Criterion | SSE | WebSocket/STOMP |
+|-----------|-----|-----------------|
+| Browser support | `fetch` / `EventSource` | Requires STOMP client library |
+| Server-to-client only | Yes | Bidirectional |
+| Session control | Separate REST calls | STOMP message |
+| Event format | `markings` + `buffers` maps | `statistics` list |
+| Snapshot frequency | configurable (`timeStep` / `snapshotInterval`) | every sim step |
+| Recommended for | Microservice clients, web animations | Interactive dashboards |
+
+---
+
+## Petri-object model API (v2)
+
+Same transports, same session controls, same snapshot shape - the difference is what the
+document may contain and how the results come back.
+
+### What the document may contain
+
+A v2 document is a [Petri-object model](/desktop/docs/petri-object-models/): one `<page>` per
+Petri-object inside one `<net>`, with the links between them in the net's `<toolspecific>`
+block. A document with a single page - an ordinary Petri net file - is accepted and runs as
+a model of one object.
+
+The v1 endpoints reject a multi-page document instead of merging its pages into one net.
+
+### Parse a model
+
+```
+POST /api/v2/model/parse
+Content-Type: application/json
+
+{ "modelXml": "<pnml>...</pnml>" }
+```
+
+**Response `200 OK`**
+
+```json
+{
+  "name": "QueueingSystem",
+  "objects": [
+    {
+      "index": 0,
+      "name": "Generator",
+      "priority": 0,
+      "x": 40.0, "y": 60.0,
+      "template": "CreateNetGenerator(2.0)",
+      "places": [ { "id": "p0", "name": "P1", "initial_marking": 1, "x": 100.0, "y": 200.0 } ],
+      "transitions": [ { "id": "t0", "name": "T1", "mean": 2.0, "deviation": 0.0,
+                         "distribution": "exp", "priority": 0, "probability": 1.0,
+                         "x": 300.0, "y": 200.0 } ],
+      "arcs": [ { "id": "a0", "source": "p0", "target": "t0", "weight": 1, "type": "normal" } ]
+    }
+  ],
+  "links": [
+    { "type": "placeFusion",
+      "source_object": 0, "source_element": 1,
+      "target_object": 1, "target_element": 0,
+      "quantity": 1 }
+  ]
+}
+```
+
+| Field | Notes |
+|-------|-------|
+| `objects[].index` | how a link and a statistic formula address the object (`O0`, `O1`, …) |
+| `objects[].x/y` | where the object's frame sits on the canvas |
+| `places[]` / `transitions[]` | in the order that indexes them - a link's `source_element` is a position in one of these lists |
+| element `x/y` | coordinates of the object's own drawing |
+| `links[].type` | `placeFusion` or `transitionToPlace` |
+
+Returns `400 Bad Request` with `{"error": "..."}` on a document that cannot be read, including a
+document whose links still declare the retired `placeToTransition` kind - a place of one object
+directly extending a foreign transition's firing condition, rather than being fused into a place
+that object's net already consumes from.
+
+### Run a model
+
+```bash
+# SSE, one snapshot per 10 sim-units
+curl -N -X POST 'http://localhost:8080/api/v2/simulation/stream?simulationTime=3600&timeStep=10' \
+     -H 'Content-Type: application/json' \
+     -d '{"modelXml": "<pnml>...</pnml>"}'
+```
+
+```bash
+# WebSocket flow
+curl -X POST http://localhost:8080/api/v2/simulation/start \
+     -H 'Content-Type: application/json' \
+     -d '{"modelXml": "<pnml>...</pnml>", "simulationTime": 3600}'
+# → {"sessionId": "550e8400-..."}
+```
+
+Snapshots have the same shape as in v1 - `markings` and `buffers` keyed by element id, which
+stays unique across the objects of a model - so a frontend that renders v1 frames renders v2
+frames unchanged. Which object an element belongs to comes from `/model/parse`.
+
+That includes `fired_transitions` and `firing_sequence`: a firing step of a composed model
+reports every place and transition of *every* object, not just the one whose transition fired,
+so a client animating a v2 run needs no extra bookkeeping to know what else moved.
+
+STOMP destinations carry the version:
+
+| Purpose | Destination |
+|---------|-------------|
+| Steps | `/topic/v2/sim/{id}/steps` |
+| Status | `/topic/v2/sim/{id}/status` |
+| Control | `/app/v2/sim/{id}/control` - `PAUSE`, `RESUME`, `STOP` |
+
+### Result per object
+
+```
+GET /api/v2/simulation/{id}/result
+```
+
+```json
+{
+  "simulation_time": 3600.0,
+  "final_time": 3600.0,
+  "total_steps": 360,
+  "objects": [
+    {
+      "index": 0,
+      "name": "Generator",
+      "priority": 0,
+      "places": [ { "id": "p0", "name": "P1", "final_marking": 0,
+                    "mean_marking": 0.42, "observed_min": 0, "observed_max": 3 } ],
+      "transitions": [ { "id": "t0", "name": "T1", "final_buffer": 1,
+                         "mean_buffer": 0.71, "observed_min": 0.0, "observed_max": 2.0 } ]
+    }
+  ]
+}
+```
+
+404 - no such session. 202 - the session exists but has not finished yet.
+
+A place shared by two objects is one instance, and it appears under every object whose net
+reaches it, with the same numbers in each.
+
+---
+
+## Integrating with the petri-net-sim web app
+
+`petri-server` can serve as a dedicated simulation backend for the
+[petri-net-sim web app](https://github.com/sergiorbk/petri-net-sim) or any system
+that produces PNML.
+
+**Workflow**
+
+1. Export PNML from the web app:
+   ```
+   GET /api/v1/sessions/{id}/net   → session net JSON
+   ```
+   Then export to PNML via the agent tool `export_network` or the MCP `export_pnml` tool.
+
+2. POST the PNML to petri-server:
+   ```python
+   frames = list(run_simulation(pnml_string, simulation_time=3600, time_step=1.0))
+   ```
+
+3. The `markings` keys in each frame match the place UUIDs from the web app's PNML export,
+   so results can be mapped back to the original net without any ID translation.
+
+**SSE event compatibility**
+
+The SSE snapshot shape emitted by petri-server is identical to the one produced by
+the web app's own `/sessions/{id}/simulate` endpoint:
+
+```
+current_time  step_number  markings  buffers  progress
+```
+
+This means the same frontend rendering code works against both backends.
+
+---
+
+## Health Check
+
+Spring Boot Actuator health endpoint - returns component status and disk/memory indicators.
+
+```bash
+curl http://localhost:8080/actuator/health
+# → {"status":"UP","components":{...}}
+```
+
+---
+
+## OpenAPI / Swagger
+
+Interactive API docs are available at runtime:
+
+| URL | Description |
+|-----|-------------|
+| `http://localhost:8080/docs` | Swagger UI |
+| `http://localhost:8080/openapi.json` | OpenAPI 3 spec (JSON) |

@@ -1,0 +1,5 @@
+{
+  "desktop": { "repository": "StetsenkoInna/PetriObjModelPaint", "local": "../PetriObjModelPaint", "label": "PetriObjModelPaint", "release": true },
+  "web": { "repository": "sergiorbk/petri-net-sim", "local": "../petri-net-sim", "label": "Petri Net Sim", "release": true },
+  "modeling": { "repository": "sergiorbk/petri-modeling-skills", "local": "../petri-modeling-skills", "label": "Modeling resources", "release": false }
+}

@@ -1,0 +1,14 @@
+ua.stetsenkoinna.api.dto
+ua.stetsenkoinna.api.enums
+ua.stetsenkoinna.api.simulation
+ua.stetsenkoinna.api.statistic
+ua.stetsenkoinna.config
+ua.stetsenkoinna.graphnet
+ua.stetsenkoinna.libnet
+ua.stetsenkoinna.libnetannotation.annotation
+ua.stetsenkoinna.libnetannotation.processor
+ua.stetsenkoinna.petriobj
+ua.stetsenkoinna.pnml
+ua.stetsenkoinna.recentprojects
+ua.stetsenkoinna.theme
+ua.stetsenkoinna.utils
